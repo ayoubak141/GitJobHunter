@@ -2,7 +2,7 @@ import pytest
 import json
 import tempfile
 import os
-from unittest.mock import patch, mock_open, MagicMock, AsyncMock
+from unittest.mock import patch, mock_open, MagicMock
 from datetime import datetime, timedelta
 import asyncio
 import aiohttp
@@ -133,11 +133,12 @@ class TestDataManagement:
     
     def test_load_seen_jobs_success(self):
         """Test successful seen jobs loading"""
-        # Use current dates so cleanup doesn't remove them
         current_time = datetime.now()
+        recent_time = current_time - timedelta(days=5)  # Use recent dates
+        
         mock_data = {
-            "https://example.com/job1": current_time.isoformat(),
-            "https://example.com/job2": (current_time - timedelta(days=5)).isoformat()
+            "https://example.com/job1": recent_time.isoformat(),
+            "https://example.com/job2": current_time.isoformat()
         }
         
         with patch("builtins.open", mock_open(read_data=json.dumps(mock_data))):
@@ -179,7 +180,12 @@ class TestAsyncFunctions:
     @pytest.mark.asyncio
     async def test_fetch_feed_async_success(self):
         """Test successful async feed fetching"""
-        rss_content = """<?xml version="1.0"?>
+        mock_response = MagicMock()
+        mock_response.status = 200
+        
+        # Create a proper coroutine for text() method
+        async def mock_text():
+            return """<?xml version="1.0"?>
         <rss version="2.0">
             <channel>
                 <item>
@@ -189,16 +195,17 @@ class TestAsyncFunctions:
             </channel>
         </rss>"""
         
-        # Create a proper async mock
-        mock_response = MagicMock()
-        mock_response.status = 200
-        mock_response.text = AsyncMock(return_value=rss_content)
+        mock_response.text = mock_text
+        
+        # Create proper async context manager
+        class MockAsyncContextManager:
+            async def __aenter__(self):
+                return mock_response
+            async def __aexit__(self, exc_type, exc_val, exc_tb):
+                pass
         
         mock_session = MagicMock()
-        mock_context = AsyncMock()
-        mock_context.__aenter__ = AsyncMock(return_value=mock_response)
-        mock_context.__aexit__ = AsyncMock(return_value=None)
-        mock_session.get.return_value = mock_context
+        mock_session.get.return_value = MockAsyncContextManager()
         
         feed_config = {
             "name": "Test Feed",

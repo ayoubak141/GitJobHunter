@@ -109,7 +109,7 @@ export LOG_LEVEL="INFO"                        # Logging level (DEBUG/INFO/WARNI
 ## **GitHub Actions Setup 🔧**
 
 The improved workflow includes:
-- **Multi-Python testing** (3.10, 3.11, 3.12)
+- **Python 3.10 testing** for reliable builds
 - **Dependency caching** for faster builds  
 - **Automated testing** on push/PR
 - **Code quality checks** with flake8
