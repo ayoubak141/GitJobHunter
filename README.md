@@ -150,12 +150,23 @@ python job_finder.py
 **Check GitHub Actions logs:**
 Go to your repo → Actions → latest workflow run
 
-## Files
+## 🚀 Upcoming Features (Next Few Days)
 
-- `job_finder.py` - Main script
-- `config.json` - RSS feeds list  
-- `seen_jobs.json` - Tracks posted jobs (auto-created)
-- `.github/workflows/main.yml` - GitHub Actions workflow
+We're actively working on several exciting enhancements to make GitJobHunter even more powerful and intelligent:
+
+### 🎯 Smart Job Filtering
+- **Keyword filtering system** - Include/exclude jobs based on specific keywords, technologies, or requirements
+- **Location-based filtering** - Filter jobs by geographic location, remote-only options, or specific cities/countries
+- **Job type classification** - Automatically categorize and filter jobs by employment type (full-time, contract, freelance, part-time)
+
+### 🤖 AI-Powered Job Matching
+- **CV-based job matching** - Upload your CV/resume and get an AI-powered matching score for each job posting
+- **Intelligent job ranking** - Jobs will be ranked by relevance to your skills and experience
+- **Personalized recommendations** - Get tailored job suggestions based on your profile and preferences
+
+These features will transform GitJobHunter from a simple job aggregator into an intelligent career assistant that helps you find the most relevant opportunities while filtering out the noise.
+
+Stay tuned for updates! 🎉
 
 ## License
 
