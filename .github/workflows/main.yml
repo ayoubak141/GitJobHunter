@@ -86,4 +86,3 @@ jobs:
         with:
           commit_message: "chore: Update seen jobs list"
           file_pattern: seen_jobs.json
-          token: ${{ secrets.GITHUB_TOKEN }}
