@@ -85,15 +85,27 @@ logger = setup_logging()
 
 
 # --- Utility Functions ---
-def sanitize_text(text: str | None) -> str:
-    """Sanitize text for Discord output"""
+def sanitize_text(text: str | None, max_length: int = 500) -> str:
+    """Sanitize text for Discord output with enhanced cleaning"""
     if not text:
         return "N/A"
+    
     # HTML decode
     text = html.unescape(text)
-    # Remove potentially dangerous characters
-    text = re.sub(r"[<>@&]", "", text)
-    return text[:500]  # Limit length
+    
+    # Remove or replace problematic characters for Discord
+    text = re.sub(r"[<>@&\u0000-\u001F\u007F-\u009F]", "", text)  # Remove control characters
+    text = re.sub(r"\*{3,}", "**", text)  # Limit consecutive asterisks
+    text = re.sub(r"_{3,}", "__", text)   # Limit consecutive underscores
+    text = re.sub(r"`{3,}", "``", text)   # Limit consecutive backticks
+    text = re.sub(r"\s+", " ", text)      # Normalize whitespace
+    text = text.strip()
+    
+    # Truncate to max length with proper ending
+    if len(text) > max_length:
+        text = text[:max_length-3] + "..."
+    
+    return text
 
 
 def health_check() -> List[str]:
@@ -241,6 +253,36 @@ async def fetch_feed_async(
     return None
 
 
+def validate_timestamp(timestamp_str: str | None) -> str | None:
+    """Validate and format timestamp for Discord embed"""
+    if not timestamp_str:
+        return None
+    
+    try:
+        # Try common timestamp formats
+        formats = [
+            "%Y-%m-%dT%H:%M:%S%z",     # ISO with timezone
+            "%Y-%m-%dT%H:%M:%SZ",      # ISO with Z
+            "%Y-%m-%dT%H:%M:%S",       # ISO without timezone
+            "%Y-%m-%d %H:%M:%S",       # Common format
+            "%a, %d %b %Y %H:%M:%S %Z", # RSS format
+            "%a, %d %b %Y %H:%M:%S %z", # RSS with timezone
+        ]
+        
+        for fmt in formats:
+            try:
+                dt = datetime.strptime(timestamp_str.strip(), fmt)
+                # Return in ISO format
+                return dt.isoformat()
+            except ValueError:
+                continue
+        
+        # If no format matches, return None
+        return None
+    except Exception:
+        return None
+
+
 def send_discord_notification(new_jobs: List[Dict[str, Any]]) -> None:
     """Sends mobile-optimized job notifications to Discord with enhanced formatting."""
     if not Config.DISCORD_WEBHOOK_URL:
@@ -258,51 +300,80 @@ def send_discord_notification(new_jobs: List[Dict[str, Any]]) -> None:
     total_jobs = len(new_jobs)
 
     for i, job in enumerate(new_jobs, 1):
-        # Create mobile-friendly title with job counter - sanitize the title
-        title = sanitize_text(job["title"])
-        title = f"🎯 {title[:80]}{'...' if len(title) > 80 else ''}"
+        try:
+            # Create mobile-friendly title with job counter - sanitize the title
+            title = sanitize_text(job.get("title", "Untitled Job"), max_length=200)  # Discord limit 256
+            title = f"🎯 {title}"
+            
+            # Ensure title doesn't exceed Discord's limit
+            if len(title) > 256:
+                title = title[:253] + "..."
 
-        # Format description with key info for mobile viewing
-        description = f"**Source:** {sanitize_text(job['source_name'])}\n"
-        if job.get("published"):
-            description += f"**Posted:** {job['published'][:10]}\n"  # Keep date short
-        description += f"**Job #{i} of {total_jobs}**"
+            # Format description with key info for mobile viewing
+            source_name = sanitize_text(job.get('source_name', 'Unknown'), max_length=100)
+            description = f"**Source:** {source_name}\n"
+            
+            if job.get("published"):
+                published_date = str(job['published'])[:10]  # Keep date short
+                description += f"**Posted:** {published_date}\n"
+            
+            description += f"**Job #{i} of {total_jobs}**"
 
-        embed = {
-            "title": title,
-            "url": job["link"],
-            "description": description,
-            "color": 0x00FF00,  # Green color for positive job news
-            "footer": {"text": f"GitJobHunter • {sanitize_text(job['source_name'])}"},
-            "timestamp": job.get("published") or None,
-        }
+            # Validate job link
+            job_link = job.get("link", "")
+            if not job_link or not job_link.startswith(("http://", "https://")):
+                logger.warning(f"Invalid or missing job link for job {i}: {job_link}")
+                job_link = "https://example.com"  # Fallback
 
-        # Add fields for better mobile layout
-        embed["fields"] = [
-            {
-                "name": "🔗 Apply",
-                "value": f"[Click here to apply]({job['link']})",
-                "inline": True,
+            # Validate timestamp
+            timestamp = validate_timestamp(job.get("published"))
+
+            embed = {
+                "title": title,
+                "url": job_link,
+                "description": description,
+                "color": 0x00FF00,  # Green color for positive job news
+                "footer": {"text": f"GitJobHunter • {source_name}"},
             }
-        ]
 
-        embeds.append(embed)
+            # Only add timestamp if it's valid
+            if timestamp:
+                embed["timestamp"] = timestamp
+
+            # Add fields for better mobile layout
+            embed["fields"] = [
+                {
+                    "name": "🔗 Apply",
+                    "value": f"[Click here to apply]({job_link})",
+                    "inline": True,
+                }
+            ]
+
+            embeds.append(embed)
+            
+        except Exception as e:
+            logger.error(f"Error creating embed for job {i}: {e}")
+            continue
+
+    if not embeds:
+        logger.warning("No valid embeds created. Skipping notification.")
+        return
 
     # Discord has a limit of 10 embeds per message
     for i in range(0, len(embeds), 10):
         chunk = embeds[i : i + 10]
         chunk_start = i + 1
-        chunk_end = min(i + 10, total_jobs)
+        chunk_end = min(i + 10, len(embeds))
 
         # Enhanced header message with summary
-        if total_jobs <= 10:
+        if len(embeds) <= 10:
             content = (
-                f"🚀 **{total_jobs} New Job{'s' if total_jobs != 1 else ''} Found!**\n"
+                f"🚀 **{len(embeds)} New Job{'s' if len(embeds) != 1 else ''} Found!**\n"
                 "💼 Fresh opportunities are waiting for you!"
             )
         else:
             content = (
-                f"🚀 **Jobs {chunk_start}-{chunk_end} of {total_jobs} New Positions!**\n"
+                f"🚀 **Jobs {chunk_start}-{chunk_end} of {len(embeds)} New Positions!**\n"
                 "💼 More opportunities discovered!"
             )
 
@@ -310,7 +381,10 @@ def send_discord_notification(new_jobs: List[Dict[str, Any]]) -> None:
 
         try:
             response = requests.post(
-                Config.DISCORD_WEBHOOK_URL, json=data, timeout=Config.REQUEST_TIMEOUT
+                Config.DISCORD_WEBHOOK_URL, 
+                json=data, 
+                timeout=Config.REQUEST_TIMEOUT,
+                headers={"Content-Type": "application/json"}
             )
             response.raise_for_status()
             logger.info(
@@ -325,6 +399,15 @@ def send_discord_notification(new_jobs: List[Dict[str, Any]]) -> None:
             logger.error(
                 f"Error sending Discord notification for jobs {chunk_start}-{chunk_end}: {e}"
             )
+            # Log the response content for debugging
+            if hasattr(e, 'response') and e.response is not None:
+                try:
+                    error_detail = e.response.text
+                    logger.error(f"Discord API response: {error_detail}")
+                except:
+                    logger.error("Could not read error response from Discord API")
+        except Exception as e:
+            logger.error(f"Unexpected error sending Discord notification: {e}")
 
 
 async def main() -> None:
