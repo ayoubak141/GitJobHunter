@@ -1,0 +1,74 @@
+{
+  "Remotive - All Remote Jobs": {
+    "consecutive_failures": 0,
+    "total_attempts": 1,
+    "total_successes": 1,
+    "last_success": "2025-09-06T17:54:36.869288",
+    "last_failure": null,
+    "last_status_code": 200,
+    "disabled": false
+  },
+  "We Work Remotely - Programming Jobs": {
+    "consecutive_failures": 0,
+    "total_attempts": 1,
+    "total_successes": 1,
+    "last_success": "2025-09-06T17:54:36.962353",
+    "last_failure": null,
+    "last_status_code": 200,
+    "disabled": false
+  },
+  "Hacker News Who Is Hiring (Monthly)": {
+    "consecutive_failures": 0,
+    "total_attempts": 1,
+    "total_successes": 1,
+    "last_success": "2025-09-06T17:54:36.983218",
+    "last_failure": null,
+    "last_status_code": 200,
+    "disabled": false
+  },
+  "Hacker News Jobs": {
+    "consecutive_failures": 0,
+    "total_attempts": 1,
+    "total_successes": 1,
+    "last_success": "2025-09-06T17:54:37.149535",
+    "last_failure": null,
+    "last_status_code": 200,
+    "disabled": false
+  },
+  "Monster Job Search (Example)": {
+    "consecutive_failures": 0,
+    "total_attempts": 1,
+    "total_successes": 1,
+    "last_success": "2025-09-06T17:54:37.332312",
+    "last_failure": null,
+    "last_status_code": 200,
+    "disabled": false
+  },
+  "We Work Remotely - All Jobs": {
+    "consecutive_failures": 0,
+    "total_attempts": 1,
+    "total_successes": 1,
+    "last_success": "2025-09-06T17:54:37.699869",
+    "last_failure": null,
+    "last_status_code": 200,
+    "disabled": false
+  },
+  "Eluta.ca Job Search (Canada Example)": {
+    "consecutive_failures": 0,
+    "total_attempts": 1,
+    "total_successes": 1,
+    "last_success": "2025-09-06T17:54:45.690928",
+    "last_failure": null,
+    "last_status_code": 200,
+    "disabled": false
+  },
+  "RemoteOK - All Remote Jobs": {
+    "consecutive_failures": 1,
+    "total_attempts": 1,
+    "total_successes": 0,
+    "last_success": null,
+    "last_failure": "2025-09-06T17:55:41.375364",
+    "last_status_code": null,
+    "disabled": false
+  }
+}

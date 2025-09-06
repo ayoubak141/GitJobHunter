@@ -19,12 +19,14 @@ class Config:
     DISCORD_WEBHOOK_URL: Optional[str] = os.getenv("DISCORD_WEBHOOK_URL")
     CONFIG_FILE: str = os.getenv("CONFIG_FILE", "config.json")
     SEEN_JOBS_FILE: str = os.getenv("SEEN_JOBS_FILE", "seen_jobs.json")
+    FEED_HEALTH_FILE: str = os.getenv("FEED_HEALTH_FILE", "feed_health.json")
     MAX_JOBS_PER_RUN: int = int(os.getenv("MAX_JOBS_PER_RUN", "50"))
     REQUEST_TIMEOUT: int = int(os.getenv("REQUEST_TIMEOUT", "30"))
     MAX_RETRIES: int = int(os.getenv("MAX_RETRIES", "3"))
     RETRY_DELAY: int = int(os.getenv("RETRY_DELAY", "2"))
     CLEANUP_AGE_DAYS: int = int(os.getenv("CLEANUP_AGE_DAYS", "30"))
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
+    FEED_FAILURE_THRESHOLD: int = int(os.getenv("FEED_FAILURE_THRESHOLD", "5"))  # Consecutive failures before disabling
 
 
 # --- Schema Validation ---
@@ -42,6 +44,7 @@ CONFIG_SCHEMA = {
                     "source": {"type": "string", "minLength": 1},
                     "category": {"type": "string"},
                     "params": {"type": ["object", "null"]},
+                    "enabled": {"type": "boolean"},  # Allow disabling feeds
                 },
             },
         }
@@ -210,10 +213,97 @@ def save_seen_jobs(seen_jobs: Dict[str, str]) -> None:
         logger.error(f"Error saving seen jobs: {e}")
 
 
+def load_feed_health() -> Dict[str, Dict[str, Any]]:
+    """Load feed health tracking data."""
+    try:
+        if os.path.exists(Config.FEED_HEALTH_FILE):
+            with open(Config.FEED_HEALTH_FILE, "r") as f:
+                return json.load(f)
+    except Exception as e:
+        logger.error(f"Error loading feed health data: {e}")
+    return {}
+
+
+def save_feed_health(feed_health: Dict[str, Dict[str, Any]]) -> None:
+    """Save feed health tracking data."""
+    try:
+        with open(Config.FEED_HEALTH_FILE, "w") as f:
+            json.dump(feed_health, f, indent=2)
+    except Exception as e:
+        logger.error(f"Error saving feed health data: {e}")
+
+
+def update_feed_health(feed_health: Dict[str, Dict[str, Any]], feed_name: str, 
+                      success: bool, status_code: Optional[int] = None) -> None:
+    """Update feed health tracking."""
+    now = datetime.now().isoformat()
+    
+    if feed_name not in feed_health:
+        feed_health[feed_name] = {
+            "consecutive_failures": 0,
+            "total_attempts": 0,
+            "total_successes": 0,
+            "last_success": None,
+            "last_failure": None,
+            "last_status_code": None,
+            "disabled": False
+        }
+    
+    health = feed_health[feed_name]
+    health["total_attempts"] += 1
+    health["last_status_code"] = status_code
+    
+    if success:
+        health["consecutive_failures"] = 0
+        health["total_successes"] += 1
+        health["last_success"] = now
+        health["disabled"] = False  # Re-enable if successful
+    else:
+        health["consecutive_failures"] += 1
+        health["last_failure"] = now
+        
+        # Auto-disable if too many consecutive failures
+        if health["consecutive_failures"] >= Config.FEED_FAILURE_THRESHOLD:
+            health["disabled"] = True
+            logger.warning(
+                f"Auto-disabling feed '{feed_name}' after {health['consecutive_failures']} "
+                f"consecutive failures. Last status: {status_code}"
+            )
+
+
+def is_feed_healthy(feed_health: Dict[str, Dict[str, Any]], feed_name: str) -> bool:
+    """Check if a feed should be processed based on health status."""
+    if feed_name not in feed_health:
+        return True
+    
+    health = feed_health[feed_name]
+    return not health.get("disabled", False)
+
+
 async def fetch_feed_async(
-    session: aiohttp.ClientSession, feed_config: Dict[str, Any]
+    session: aiohttp.ClientSession, feed_config: Dict[str, Any], 
+    feed_health: Dict[str, Dict[str, Any]]
 ) -> Optional[feedparser.FeedParserDict]:
-    """Asynchronously fetch and parse an RSS feed with retry logic"""
+    """Asynchronously fetch and parse an RSS feed with intelligent retry logic"""
+    
+    feed_name = feed_config['name']
+    
+    # Check if feed is disabled due to health issues
+    if not is_feed_healthy(feed_health, feed_name):
+        logger.info(f"Skipping disabled feed: {feed_name}")
+        return None
+    
+    # Check if feed is manually disabled in config
+    if not feed_config.get('enabled', True):
+        logger.info(f"Skipping manually disabled feed: {feed_name}")
+        return None
+    
+    # HTTP status codes that should not be retried
+    NO_RETRY_CODES = {400, 401, 403, 404, 410, 451}  # Client errors that won't change
+    PERMANENT_FAILURE_CODES = {410}  # Resource permanently gone
+    
+    last_status_code = None
+    
     for attempt in range(Config.MAX_RETRIES):
         try:
             params = (
@@ -221,34 +311,101 @@ async def fetch_feed_async(
             )
             url = f"{feed_config['url']}?{params}" if params else feed_config["url"]
 
+            # Add user agent and headers to reduce blocking
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (compatible; JobFinder/1.0; RSS Reader)',
+                'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+                'Accept-Encoding': 'gzip, deflate',
+                'Cache-Control': 'no-cache'
+            }
+
             timeout = aiohttp.ClientTimeout(total=Config.REQUEST_TIMEOUT)
-            async with session.get(url, timeout=timeout) as response:
+            async with session.get(url, headers=headers, timeout=timeout) as response:
+                last_status_code = response.status
+                
                 if response.status == 200:
                     content = await response.text()
                     feed = feedparser.parse(content)
                     logger.info(
-                        f"Successfully fetched {feed_config['name']} (attempt {attempt + 1})"
+                        f"Successfully fetched {feed_name} (attempt {attempt + 1})"
                     )
+                    # Update health tracking for success
+                    update_feed_health(feed_health, feed_name, True, response.status)
                     return feed
+                
+                # Handle different HTTP error categories
+                elif response.status in PERMANENT_FAILURE_CODES:
+                    logger.error(
+                        f"HTTP {response.status} (Permanent failure) for {feed_name} - "
+                        f"Resource permanently unavailable, skipping retries"
+                    )
+                    update_feed_health(feed_health, feed_name, False, response.status)
+                    return None
+                
+                elif response.status in NO_RETRY_CODES:
+                    logger.error(
+                        f"HTTP {response.status} (Client error) for {feed_name} - "
+                        f"Not retrying client errors. Check feed URL and permissions."
+                    )
+                    update_feed_health(feed_health, feed_name, False, response.status)
+                    return None
+                
+                elif response.status == 429:  # Rate limited
+                    retry_after = response.headers.get('Retry-After', Config.RETRY_DELAY * 2)
+                    try:
+                        retry_after = int(retry_after)
+                    except (ValueError, TypeError):
+                        retry_after = Config.RETRY_DELAY * 2
+                    
+                    logger.warning(
+                        f"HTTP 429 (Rate limited) for {feed_name} (attempt {attempt + 1}) - "
+                        f"Waiting {retry_after} seconds"
+                    )
+                    
+                    if attempt < Config.MAX_RETRIES - 1:
+                        await asyncio.sleep(retry_after)
+                    continue
+                
+                elif 500 <= response.status < 600:  # Server errors
+                    logger.warning(
+                        f"HTTP {response.status} (Server error) for {feed_name} (attempt {attempt + 1}) - "
+                        f"Server issue, will retry"
+                    )
+                
                 else:
                     logger.warning(
-                        f"HTTP {response.status} for {feed_config['name']} (attempt {attempt + 1})"
+                        f"HTTP {response.status} for {feed_name} (attempt {attempt + 1})"
                     )
 
         except asyncio.TimeoutError:
-            logger.warning(f"Timeout for {feed_config['name']} (attempt {attempt + 1})")
+            logger.warning(f"Timeout for {feed_name} (attempt {attempt + 1})")
+            last_status_code = None  # Timeout, not HTTP status
+        except aiohttp.ClientError as e:
+            logger.warning(
+                f"Client error for {feed_name} (attempt {attempt + 1}): {e}"
+            )
+            last_status_code = None
         except Exception as e:
             logger.warning(
-                f"Error fetching {feed_config['name']} (attempt {attempt + 1}): {e}"
+                f"Unexpected error fetching {feed_name} (attempt {attempt + 1}): {e}"
             )
+            last_status_code = None
 
+        # Only retry if we haven't hit a non-retryable error
         if attempt < Config.MAX_RETRIES - 1:
-            await asyncio.sleep(
-                Config.RETRY_DELAY * (attempt + 1)
-            )  # Exponential backoff
+            # Use longer delays for server errors
+            delay = Config.RETRY_DELAY * (attempt + 1)
+            if last_status_code and last_status_code >= 500:
+                delay *= 2  # Double delay for server errors
+            
+            logger.debug(f"Waiting {delay} seconds before retry {attempt + 2}")
+            await asyncio.sleep(delay)
 
+    # Update health tracking for final failure
+    update_feed_health(feed_health, feed_name, False, last_status_code)
+    
     logger.error(
-        f"Failed to fetch {feed_config['name']} after {Config.MAX_RETRIES} attempts"
+        f"Failed to fetch {feed_name} after {Config.MAX_RETRIES} attempts"
     )
     return None
 
@@ -428,6 +585,7 @@ async def main() -> None:
         return
 
     seen_jobs = load_seen_jobs()
+    feed_health = load_feed_health()
     new_jobs = []
 
     logger.info("Starting job search...")
@@ -436,7 +594,7 @@ async def main() -> None:
     timeout = aiohttp.ClientTimeout(total=Config.REQUEST_TIMEOUT)
     async with aiohttp.ClientSession(timeout=timeout) as session:
         # Process feeds concurrently
-        tasks = [fetch_feed_async(session, feed_config) for feed_config in feeds]
+        tasks = [fetch_feed_async(session, feed_config, feed_health) for feed_config in feeds]
         feeds_results = await asyncio.gather(*tasks, return_exceptions=True)
 
         for feed_config, feed_result in zip(feeds, feeds_results):
@@ -481,6 +639,9 @@ async def main() -> None:
 
     logger.info("Job search complete.")
 
+    # Save feed health data
+    save_feed_health(feed_health)
+
     if new_jobs:
         logger.info(
             f"Found a total of {len(new_jobs)} new jobs. Sending notification..."
@@ -489,6 +650,15 @@ async def main() -> None:
         save_seen_jobs(seen_jobs)
     else:
         logger.info("No new jobs found.")
+
+    # Log feed health summary
+    disabled_feeds = [name for name, health in feed_health.items() if health.get("disabled")]
+    if disabled_feeds:
+        logger.warning(f"Disabled feeds due to repeated failures: {', '.join(disabled_feeds)}")
+    
+    healthy_feeds = [name for name, health in feed_health.items() 
+                    if not health.get("disabled") and health.get("total_successes", 0) > 0]
+    logger.info(f"Healthy feeds: {len(healthy_feeds)}, Disabled feeds: {len(disabled_feeds)}")
 
 
 if __name__ == "__main__":
