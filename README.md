@@ -2,6 +2,10 @@
 
 A Python script that checks job RSS feeds and posts new listings to Discord. Runs daily via GitHub Actions.
 
+## Project Status
+
+⚠️ **This project is not completed yet but is functional** - The core features work as intended, but there may be ongoing improvements and additional features being developed.
+
 ## What it does
 
 - Checks 13 pre-configured job RSS feeds (WeWorkRemotely, RemoteOK, Indeed, etc.)
