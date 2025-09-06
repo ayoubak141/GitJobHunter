@@ -1,0 +1,11 @@
+{
+  "feeds": [
+    {
+      "name": "Test Remote Jobs",
+      "url": "https://weworkremotely.com/remote-jobs.rss",
+      "source": "WeWorkRemotely",
+      "category": "remote/test",
+      "params": null
+    }
+  ]
+}

@@ -1,2 +1,7 @@
 feedparser
 requests
+aiohttp
+jsonschema
+pytest
+pytest-asyncio
+flake8
