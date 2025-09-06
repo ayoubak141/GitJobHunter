@@ -41,7 +41,7 @@ class TestUtilityFunctions:
     def test_sanitize_text_html(self):
         """Test text sanitization with HTML entities"""
         result = sanitize_text("Software &amp; Hardware Engineer")
-        assert result == "Software  Hardware Engineer"
+        assert result == "Software Hardware Engineer"
     
     def test_sanitize_text_dangerous_chars(self):
         """Test text sanitization with dangerous characters"""
@@ -213,7 +213,21 @@ class TestAsyncFunctions:
             "params": None
         }
         
-        result = await fetch_feed_async(mock_session, feed_config)
+        # Mock feed health data
+        feed_health = {
+            "Test Feed": {
+                "enabled": True,
+                "consecutive_failures": 0,
+                "total_attempts": 0,
+                "total_successes": 0,
+                "last_success": None,
+                "last_failure": None,
+                "last_status_code": None,
+                "disabled": False
+            }
+        }
+        
+        result = await fetch_feed_async(mock_session, feed_config, feed_health)
         assert result is not None
         assert len(result.entries) == 1
         assert result.entries[0].title == "Test Job"
@@ -230,7 +244,21 @@ class TestAsyncFunctions:
             "params": None
         }
         
-        result = await fetch_feed_async(mock_session, feed_config)
+        # Mock feed health data
+        feed_health = {
+            "Test Feed": {
+                "enabled": True,
+                "consecutive_failures": 0,
+                "total_attempts": 0,
+                "total_successes": 0,
+                "last_success": None,
+                "last_failure": None,
+                "last_status_code": None,
+                "disabled": False
+            }
+        }
+        
+        result = await fetch_feed_async(mock_session, feed_config, feed_health)
         assert result is None
 
 
