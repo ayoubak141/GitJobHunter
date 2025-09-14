@@ -1,4 +1,15 @@
 import { useState, useEffect } from 'react'
+import { 
+  XMarkIcon,
+  PlusIcon,
+  CheckIcon,
+  BookmarkIcon,
+  RssIcon,
+  BuildingOfficeIcon,
+  FolderIcon,
+  TagIcon,
+  LightBulbIcon
+} from '@heroicons/react/24/outline'
 import { api, type FeedConfig } from '../utils/api'
 
 export default function Feeds() {
@@ -108,9 +119,9 @@ export default function Feeds() {
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
         >
           {showAddForm ? (
-            <>❌ Cancel</>
+            <><XMarkIcon className="h-5 w-5 mr-2" /> Cancel</>
           ) : (
-            <>➕ Add RSS Feed</>
+            <><PlusIcon className="h-5 w-5 mr-2" /> Add RSS Feed</>
           )}
         </button>
       </div>
@@ -119,7 +130,7 @@ export default function Feeds() {
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-center">
-            <div className="text-red-500 text-xl mr-3">❌</div>
+            <XMarkIcon className="h-6 w-6 text-red-500 mr-3" />
             <div className="text-red-800">{error}</div>
           </div>
         </div>
@@ -128,7 +139,7 @@ export default function Feeds() {
       {success && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="flex items-center">
-            <div className="text-green-500 text-xl mr-3">✅</div>
+            <CheckIcon className="h-6 w-6 text-green-500 mr-3" />
             <div className="text-green-800">{success}</div>
           </div>
         </div>
@@ -246,7 +257,7 @@ export default function Feeds() {
                     Adding...
                   </>
                 ) : (
-                  <>💾 Add Feed</>
+                  <><BookmarkIcon className="h-5 w-5 mr-2" /> Add Feed</>
                 )}
               </button>
             </div>
@@ -268,7 +279,7 @@ export default function Feeds() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <div className="text-xl">📡</div>
+                      <RssIcon className="h-5 w-5 text-blue-600" />
                       <div>
                         <div className="flex items-center space-x-2">
                           <h4 className="text-lg font-medium text-gray-900">{feed.name}</h4>
@@ -280,16 +291,16 @@ export default function Feeds() {
                         </div>
                         <div className="flex items-center space-x-4 text-sm text-gray-500">
                           <span className="inline-flex items-center">
-                            <span className="mr-1">🏢</span>
+                            <BuildingOfficeIcon className="h-4 w-4 mr-1" />
                             {feed.source}
                           </span>
                           <span className="inline-flex items-center">
-                            <span className="mr-1">📂</span>
+                            <FolderIcon className="h-4 w-4 mr-1" />
                             {feed.category}
                           </span>
                           {feed.params?.tags && (
                             <span className="inline-flex items-center">
-                              <span className="mr-1">🏷️</span>
+                              <TagIcon className="h-4 w-4 mr-1" />
                               {feed.params.tags}
                             </span>
                           )}
@@ -314,14 +325,14 @@ export default function Feeds() {
         </div>
       ) : (
         <div className="text-center py-12 bg-white rounded-lg border">
-          <div className="text-6xl mb-4">📡</div>
+          <RssIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No RSS feeds configured</h3>
           <p className="text-gray-500 mb-4">Add your first RSS feed to start aggregating job listings.</p>
           <button 
             onClick={() => setShowAddForm(true)}
             className="text-blue-600 hover:text-blue-800 font-medium"
           >
-            ➕ Add RSS Feed
+            <PlusIcon className="h-4 w-4 inline mr-1" /> Add RSS Feed
           </button>
         </div>
       )}
@@ -329,7 +340,7 @@ export default function Feeds() {
       {/* Popular RSS Feeds Section */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
         <div className="flex items-start space-x-3">
-          <div className="text-blue-500 text-xl">💡</div>
+          <LightBulbIcon className="h-6 w-6 text-blue-500" />
           <div>
             <h3 className="text-sm font-medium text-blue-800 mb-3">Popular Job RSS Feeds</h3>
             <div className="text-sm text-blue-700 space-y-2">

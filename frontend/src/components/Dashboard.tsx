@@ -1,4 +1,14 @@
 import { useState, useEffect } from 'react'
+import { 
+  ExclamationTriangleIcon, 
+  ArrowPathIcon, 
+  CheckIcon, 
+  XMarkIcon,
+  ChartBarIcon,
+  SparklesIcon,
+  RssIcon,
+  ClockIcon 
+} from '@heroicons/react/24/outline'
 import { api, type JobsStats, type FeedConfig, type ProcessResponse } from '../utils/api'
 
 export default function Dashboard() {
@@ -58,7 +68,7 @@ export default function Dashboard() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <div className="flex items-center">
-          <div className="text-red-500 text-xl mr-3">⚠️</div>
+          <ExclamationTriangleIcon className="h-6 w-6 text-red-500 mr-3" />
           <div>
             <h3 className="text-red-800 font-medium">Error loading data</h3>
             <p className="text-red-600 text-sm mt-1">{error}</p>
@@ -94,7 +104,7 @@ export default function Dashboard() {
             </>
           ) : (
             <>
-              <span className="mr-2">🔄</span>
+              <ArrowPathIcon className="h-5 w-5 mr-2" />
               Process Jobs Now
             </>
           )}
@@ -110,7 +120,7 @@ export default function Dashboard() {
             <div className={`text-xl ${
               processResult.success ? 'text-green-500' : 'text-red-500'
             }`}>
-              {processResult.success ? '✅' : '❌'}
+              {processResult.success ? <CheckIcon className="h-6 w-6" /> : <XMarkIcon className="h-6 w-6" />}
             </div>
             <div className="flex-1">
               <h3 className={`font-medium ${
@@ -123,10 +133,10 @@ export default function Dashboard() {
                   processResult.success ? 'text-green-700' : 'text-red-700'
                 }`}>
                   <p>Found {processResult.newJobsFound} new jobs from {processResult.totalJobs} total</p>
-                  {processResult.notificationSent && <p>✅ Discord notification sent successfully</p>}
-                  {processResult.notificationError && <p>⚠️ Notification error: {processResult.notificationError}</p>}
+                  {processResult.notificationSent && <p><CheckIcon className="h-4 w-4 inline mr-1" /> Discord notification sent successfully</p>}
+                  {processResult.notificationError && <p><ExclamationTriangleIcon className="h-4 w-4 inline mr-1" /> Notification error: {processResult.notificationError}</p>}
                   {processResult.failedFeeds && processResult.failedFeeds.length > 0 && (
-                    <p>⚠️ Failed feeds: {processResult.failedFeeds.join(', ')}</p>
+                    <p><ExclamationTriangleIcon className="h-4 w-4 inline mr-1" /> Failed feeds: {processResult.failedFeeds.join(', ')}</p>
                   )}
                 </div>
               )}
@@ -147,7 +157,7 @@ export default function Dashboard() {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="text-3xl">📊</div>
+                <ChartBarIcon className="h-8 w-8 text-blue-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
@@ -163,7 +173,7 @@ export default function Dashboard() {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="text-3xl">✨</div>
+                <SparklesIcon className="h-8 w-8 text-green-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
@@ -179,7 +189,7 @@ export default function Dashboard() {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="text-3xl">📡</div>
+                <RssIcon className="h-8 w-8 text-blue-600" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
@@ -231,7 +241,7 @@ export default function Dashboard() {
         <div className="bg-white shadow-sm rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="text-xl">⏰</div>
+              <ClockIcon className="h-6 w-6 text-gray-600" />
               <div>
                 <h3 className="text-sm font-medium text-gray-900">Last Processed</h3>
                 <p className="text-sm text-gray-500">
@@ -258,7 +268,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
-                      <div className="text-lg">📡</div>
+                      <RssIcon className="h-5 w-5 text-blue-600" />
                       <div>
                         <div className="flex items-center space-x-2">
                           <h4 className="text-sm font-medium text-gray-900">{feed.name}</h4>
@@ -293,7 +303,7 @@ export default function Dashboard() {
       {/* Empty State */}
       {(!feeds || feeds.length === 0) && (
         <div className="text-center py-12 bg-white rounded-lg border">
-          <div className="text-6xl mb-4">📡</div>
+          <RssIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No RSS feeds configured</h3>
           <p className="text-gray-500 mb-4">Add some RSS feeds to start aggregating job listings.</p>
           <button className="text-blue-600 hover:text-blue-800 font-medium">
@@ -305,7 +315,7 @@ export default function Dashboard() {
       {/* Automatic Processing Info */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
         <div className="flex items-start space-x-3">
-          <div className="text-blue-500 text-xl">⏰</div>
+          <ClockIcon className="h-6 w-6 text-blue-500" />
           <div>
             <h3 className="text-sm font-medium text-blue-800">Automatic Processing</h3>
             <div className="mt-2 text-sm text-blue-700">

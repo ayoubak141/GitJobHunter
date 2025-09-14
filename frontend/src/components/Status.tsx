@@ -1,4 +1,16 @@
 import { useState, useEffect } from 'react'
+import { 
+  CheckIcon,
+  ExclamationTriangleIcon,
+  XMarkIcon,
+  QuestionMarkCircleIcon,
+  ArrowPathIcon,
+  ChatBubbleLeftRightIcon,
+  BoltIcon,
+  CloudIcon,
+  CircleStackIcon,
+  ClockIcon
+} from '@heroicons/react/24/outline'
 import { api, type HealthStatus } from '../utils/api'
 
 export default function Status() {
@@ -46,15 +58,16 @@ export default function Status() {
   }
 
   const getStatusIcon = (status: string) => {
+    const className = "h-6 w-6";
     switch (status?.toLowerCase()) {
       case 'healthy':
-        return '✅'
+        return <CheckIcon className={`${className} text-green-500`} />
       case 'warning':
-        return '⚠️'
+        return <ExclamationTriangleIcon className={`${className} text-yellow-500`} />
       case 'error':
-        return '❌'
+        return <XMarkIcon className={`${className} text-red-500`} />
       default:
-        return '❓'
+        return <QuestionMarkCircleIcon className={`${className} text-gray-500`} />
     }
   }
 
@@ -87,7 +100,7 @@ export default function Status() {
             </>
           ) : (
             <>
-              🔄 Refresh Status
+              <ArrowPathIcon className="h-4 w-4 mr-2" /> Refresh Status
             </>
           )}
         </button>
@@ -97,7 +110,7 @@ export default function Status() {
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-center">
-            <div className="text-red-500 text-xl mr-3">❌</div>
+            <XMarkIcon className="h-6 w-6 text-red-500 mr-3" />
             <div>
               <h3 className="text-red-800 font-medium">Connection Error</h3>
               <p className="text-red-600 text-sm mt-1">{error}</p>
@@ -123,7 +136,7 @@ export default function Status() {
             {/* Overall Status */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="text-2xl">{getStatusIcon(health.status)}</div>
+                <div>{getStatusIcon(health.status)}</div>
                 <div>
                   <h4 className="text-lg font-medium text-gray-900">Overall Status</h4>
                   <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(health.status)}`}>
@@ -143,7 +156,7 @@ export default function Status() {
             <div className="border-t pt-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="text-xl">💬</div>
+                  <ChatBubbleLeftRightIcon className="h-5 w-5 text-blue-600" />
                   <div>
                     <h4 className="text-sm font-medium text-gray-900">Discord Integration</h4>
                     <div className="flex items-center space-x-4 mt-1">
@@ -168,7 +181,7 @@ export default function Status() {
             {/* Response Time Indicator */}
             <div className="border-t pt-4">
               <div className="flex items-center space-x-3">
-                <div className="text-xl">⚡</div>
+                <BoltIcon className="h-5 w-5 text-yellow-500" />
                 <div>
                   <h4 className="text-sm font-medium text-gray-900">Response Time</h4>
                   <div className="flex items-center space-x-2 mt-1">
@@ -193,21 +206,21 @@ export default function Status() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Platform */}
               <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <div className="text-2xl mb-2">☁️</div>
+                <CloudIcon className="h-8 w-8 text-blue-500 mx-auto mb-2" />
                 <h4 className="text-sm font-medium text-gray-900">Platform</h4>
                 <p className="text-sm text-gray-600">Cloudflare Workers</p>
               </div>
 
               {/* Runtime */}
               <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <div className="text-2xl mb-2">⚡</div>
+                <BoltIcon className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
                 <h4 className="text-sm font-medium text-gray-900">Runtime</h4>
                 <p className="text-sm text-gray-600">V8 JavaScript Engine</p>
               </div>
 
               {/* Storage */}
               <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <div className="text-2xl mb-2">💾</div>
+                <CircleStackIcon className="h-8 w-8 text-gray-600 mx-auto mb-2" />
                 <h4 className="text-sm font-medium text-gray-900">Storage</h4>
                 <p className="text-sm text-gray-600">Cloudflare KV</p>
               </div>
@@ -253,7 +266,7 @@ export default function Status() {
       {/* Cron Schedule Info */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
         <div className="flex items-start space-x-3">
-          <div className="text-blue-500 text-xl">⏰</div>
+          <ClockIcon className="h-6 w-6 text-blue-500" />
           <div>
             <h3 className="text-sm font-medium text-blue-800">Automatic Processing Schedule</h3>
             <div className="mt-2 text-sm text-blue-700">

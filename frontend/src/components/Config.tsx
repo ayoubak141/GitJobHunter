@@ -1,4 +1,12 @@
 import { useState, useEffect } from 'react'
+import { 
+  CheckIcon,
+  ExclamationTriangleIcon,
+  BeakerIcon,
+  XMarkIcon,
+  BookmarkIcon,
+  LightBulbIcon
+} from '@heroicons/react/24/outline'
 import { api, type DiscordConfig, type TestResponse } from '../utils/api'
 
 export default function Config() {
@@ -107,8 +115,11 @@ export default function Config() {
       <div className="bg-white shadow-sm rounded-lg border p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className={`text-2xl ${config?.configured ? '✅' : '⚠️'}`}>
-              {config?.configured ? '✅' : '⚠️'}
+            <div>
+              {config?.configured ? 
+                <CheckIcon className="h-8 w-8 text-green-500" /> : 
+                <ExclamationTriangleIcon className="h-8 w-8 text-yellow-500" />
+              }
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-900">
@@ -135,7 +146,7 @@ export default function Config() {
                 </>
               ) : (
                 <>
-                  🧪 Test Webhook
+                  <BeakerIcon className="h-4 w-4 mr-2" /> Test Webhook
                 </>
               )}
             </button>
@@ -156,7 +167,7 @@ export default function Config() {
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-center">
-            <div className="text-red-500 text-xl mr-3">❌</div>
+            <XMarkIcon className="h-6 w-6 text-red-500 mr-3" />
             <div className="text-red-800">{error}</div>
           </div>
         </div>
@@ -165,7 +176,7 @@ export default function Config() {
       {success && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="flex items-center">
-            <div className="text-green-500 text-xl mr-3">✅</div>
+            <CheckIcon className="h-6 w-6 text-green-500 mr-3" />
             <div className="text-green-800">{success}</div>
           </div>
         </div>
@@ -175,7 +186,7 @@ export default function Config() {
       {testResult && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-start space-x-3">
-            <div className="text-blue-500 text-xl">🧪</div>
+            <BeakerIcon className="h-6 w-6 text-blue-500" />
             <div className="flex-1">
               <h3 className="text-sm font-medium text-blue-800">Discord Test Results</h3>
               <div className="mt-2 text-sm text-blue-700 space-y-1">
@@ -271,7 +282,7 @@ export default function Config() {
                 </>
               ) : (
                 <>
-                  💾 {config?.configured ? 'Update' : 'Save'} Configuration
+                  <BookmarkIcon className="h-5 w-5 mr-2" /> {config?.configured ? 'Update' : 'Save'} Configuration
                 </>
               )}
             </button>
@@ -282,7 +293,7 @@ export default function Config() {
       {/* Help Section */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
         <div className="flex items-start space-x-3">
-          <div className="text-blue-500 text-xl">💡</div>
+          <LightBulbIcon className="h-6 w-6 text-blue-500" />
           <div>
             <h3 className="text-sm font-medium text-blue-800">How to create a Discord webhook</h3>
             <div className="mt-2 text-sm text-blue-700 space-y-1">
