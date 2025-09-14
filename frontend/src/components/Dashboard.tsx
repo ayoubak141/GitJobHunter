@@ -87,7 +87,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Header with Process Button */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <div>
           <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Jobs Dashboard</h2>
           <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>Monitor and manage job feed processing</p>
@@ -95,7 +95,7 @@ export default function Dashboard() {
         <button
           onClick={handleProcessJobs}
           disabled={processing}
-          className={`inline-flex items-center px-6 py-3 text-base font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`inline-flex items-center justify-center px-4 sm:px-6 py-3 text-sm sm:text-base font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target w-full sm:w-auto ${
             processing ? 'button-processing' : 'button-primary'
           }`}
         >
@@ -107,7 +107,8 @@ export default function Dashboard() {
           ) : (
             <>
               <ArrowPathIcon className="h-5 w-5 mr-2" />
-              Process Jobs Now
+              <span className="hidden sm:inline">Process Jobs Now</span>
+              <span className="sm:hidden">Process Now</span>
             </>
           )}
         </button>

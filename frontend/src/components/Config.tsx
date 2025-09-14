@@ -119,19 +119,19 @@ export default function Config() {
         boxShadow: 'var(--shadow-sm)',
         padding: 'var(--spacing-lg)'
       }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+          <div className="flex items-center space-x-3 flex-1">
+            <div className="flex-shrink-0">
               {config?.configured ? 
-                <CheckIcon className="h-8 w-8" style={{ color: 'var(--status-success)' }} /> : 
-                <ExclamationTriangleIcon className="h-8 w-8" style={{ color: 'var(--status-warning)' }} />
+                <CheckIcon className="h-6 w-6 sm:h-8 sm:w-8" style={{ color: 'var(--status-success)' }} /> : 
+                <ExclamationTriangleIcon className="h-6 w-6 sm:h-8 sm:w-8" style={{ color: 'var(--status-warning)' }} />
               }
             </div>
-            <div>
-              <h3 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base sm:text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
                 {config?.configured ? 'Discord Webhook Configured' : 'Discord Webhook Not Configured'}
               </h3>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
                 {config?.configured 
                   ? `Notifications ${config.enabled ? 'enabled' : 'disabled'} • Max ${config.maxJobsPerMessage} jobs per message`
                   : 'Configure your Discord webhook to receive job notifications'
@@ -143,7 +143,7 @@ export default function Config() {
             <button
               onClick={handleTest}
               disabled={testing}
-              className="button-secondary inline-flex items-center px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50"
+              className="button-secondary inline-flex items-center justify-center px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 touch-target w-full sm:w-auto"
             >
               {testing ? (
                 <>
@@ -152,7 +152,9 @@ export default function Config() {
                 </>
               ) : (
                 <>
-                  <BeakerIcon className="h-4 w-4 mr-2" /> Test Webhook
+                  <BeakerIcon className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Test Webhook</span>
+                  <span className="sm:hidden">Test</span>
                 </>
               )}
             </button>
@@ -240,17 +242,20 @@ export default function Config() {
               id="webhookUrl"
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
-              placeholder={config?.configured ? "Enter new webhook URL to update (leave empty to keep current)" : "https://discord.com/api/webhooks/..."}
-              className="w-full px-3 py-2 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+              placeholder={config?.configured ? "Enter new webhook URL to update" : "https://discord.com/api/webhooks/..."}
+              className="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors touch-target"
               style={{ 
                 borderColor: 'var(--neutral-300)',
                 borderRadius: 'var(--border-radius-lg)',
                 backgroundColor: 'var(--surface)',
-                color: 'var(--text-primary)'
+                color: 'var(--text-primary)',
+                fontSize: '16px', // Prevents zoom on iOS
+                minHeight: '48px' // Better touch target
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = 'transparent'
                 e.target.style.boxShadow = '0 0 0 2px var(--accent-primary)'
+                e.target.style.backgroundColor = 'var(--surface)'
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = 'var(--neutral-300)'
@@ -294,16 +299,19 @@ export default function Config() {
               max="10"
               value={maxJobsPerMessage}
               onChange={(e) => setMaxJobsPerMessage(parseInt(e.target.value))}
-              className="w-20 px-3 py-2 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+              className="w-20 sm:w-24 px-3 py-3 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors touch-target"
               style={{ 
                 borderColor: 'var(--neutral-300)',
                 borderRadius: 'var(--border-radius-lg)',
                 backgroundColor: 'var(--surface)',
-                color: 'var(--text-primary)'
+                color: 'var(--text-primary)',
+                fontSize: '16px', // Prevents zoom on iOS
+                minHeight: '48px' // Better touch target
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = 'transparent'
                 e.target.style.boxShadow = '0 0 0 2px var(--accent-primary)'
+                e.target.style.backgroundColor = 'var(--surface)'
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = 'var(--neutral-300)'
@@ -316,11 +324,11 @@ export default function Config() {
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-stretch sm:justify-end">
             <button
               type="submit"
               disabled={saving}
-              className={`inline-flex items-center px-6 py-3 text-base font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`inline-flex items-center justify-center px-6 py-3 text-sm sm:text-base font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target w-full sm:w-auto ${
                 saving ? 'button-processing' : 'button-primary'
               }`}
             >
@@ -331,7 +339,9 @@ export default function Config() {
                 </>
               ) : (
                 <>
-                  <BookmarkIcon className="h-5 w-5 mr-2" /> {config?.configured ? 'Update' : 'Save'} Configuration
+                  <BookmarkIcon className="h-5 w-5 mr-2" />
+                  <span className="hidden sm:inline">{config?.configured ? 'Update' : 'Save'} Configuration</span>
+                  <span className="sm:hidden">{config?.configured ? 'Update' : 'Save'}</span>
                 </>
               )}
             </button>

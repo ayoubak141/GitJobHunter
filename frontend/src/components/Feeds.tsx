@@ -109,21 +109,25 @@ export default function Feeds() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <div>
           <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>RSS Feeds Management</h2>
           <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>Configure RSS feeds for job aggregation</p>
         </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className={`inline-flex items-center px-6 py-3 text-base font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
+          className={`inline-flex items-center justify-center px-4 sm:px-6 py-3 text-sm sm:text-base font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors touch-target w-full sm:w-auto ${
             showAddForm ? 'button-secondary' : 'button-primary'
           }`}
         >
           {showAddForm ? (
             <><XMarkIcon className="h-5 w-5 mr-2" /> Cancel</>
           ) : (
-            <><PlusIcon className="h-5 w-5 mr-2" /> Add RSS Feed</>
+            <>
+              <PlusIcon className="h-5 w-5 mr-2" />
+              <span className="hidden sm:inline">Add RSS Feed</span>
+              <span className="sm:hidden">Add Feed</span>
+            </>
           )}
         </button>
       </div>
@@ -162,8 +166,8 @@ export default function Feeds() {
             <h3 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Add New RSS Feed</h3>
           </div>
           
-          <form onSubmit={handleSubmit} style={{ padding: 'var(--spacing-lg)' }} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--spacing-lg)' }}>
+          <form onSubmit={handleSubmit} style={{ padding: 'var(--spacing-md) var(--spacing-lg)' }} className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 mobile-form-grid" style={{ gap: 'var(--spacing-md) var(--spacing-lg)' }}>
               {/* Feed Name */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
@@ -176,16 +180,19 @@ export default function Feeds() {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="e.g., Remote Developer Jobs"
-                  className="w-full px-3 py-2 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors touch-target"
                   style={{ 
                     borderColor: 'var(--neutral-300)',
                     borderRadius: 'var(--border-radius-lg)',
                     backgroundColor: 'var(--surface)',
-                    color: 'var(--text-primary)'
+                    color: 'var(--text-primary)',
+                    fontSize: '16px', // Prevents zoom on iOS
+                    minHeight: '48px' // Better touch target
                   }}
                   onFocus={(e) => {
                     e.target.style.borderColor = 'transparent'
                     e.target.style.boxShadow = '0 0 0 2px var(--accent-primary)'
+                    e.target.style.backgroundColor = 'var(--surface)'
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = 'var(--neutral-300)'
@@ -206,16 +213,19 @@ export default function Feeds() {
                   value={formData.source}
                   onChange={handleInputChange}
                   placeholder="e.g., RemoteOK, Indeed, LinkedIn"
-                  className="w-full px-3 py-2 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors touch-target"
                   style={{ 
                     borderColor: 'var(--neutral-300)',
                     borderRadius: 'var(--border-radius-lg)',
                     backgroundColor: 'var(--surface)',
-                    color: 'var(--text-primary)'
+                    color: 'var(--text-primary)',
+                    fontSize: '16px', // Prevents zoom on iOS
+                    minHeight: '48px' // Better touch target
                   }}
                   onFocus={(e) => {
                     e.target.style.borderColor = 'transparent'
                     e.target.style.boxShadow = '0 0 0 2px var(--accent-primary)'
+                    e.target.style.backgroundColor = 'var(--surface)'
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = 'var(--neutral-300)'
@@ -237,16 +247,19 @@ export default function Feeds() {
                 value={formData.url}
                 onChange={handleInputChange}
                 placeholder="https://example.com/jobs.rss"
-                className="w-full px-3 py-2 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+                className="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors touch-target"
                 style={{ 
                   borderColor: 'var(--neutral-300)',
                   borderRadius: 'var(--border-radius-lg)',
                   backgroundColor: 'var(--surface)',
-                  color: 'var(--text-primary)'
+                  color: 'var(--text-primary)',
+                  fontSize: '16px', // Prevents zoom on iOS
+                  minHeight: '48px' // Better touch target
                 }}
                 onFocus={(e) => {
                   e.target.style.borderColor = 'transparent'
                   e.target.style.boxShadow = '0 0 0 2px var(--accent-primary)'
+                  e.target.style.backgroundColor = 'var(--surface)'
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = 'var(--neutral-300)'
@@ -268,16 +281,19 @@ export default function Feeds() {
                   value={formData.category}
                   onChange={handleInputChange}
                   placeholder="e.g., remote/developer, frontend, backend"
-                  className="w-full px-3 py-2 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors touch-target"
                   style={{ 
                     borderColor: 'var(--neutral-300)',
                     borderRadius: 'var(--border-radius-lg)',
                     backgroundColor: 'var(--surface)',
-                    color: 'var(--text-primary)'
+                    color: 'var(--text-primary)',
+                    fontSize: '16px', // Prevents zoom on iOS
+                    minHeight: '48px' // Better touch target
                   }}
                   onFocus={(e) => {
                     e.target.style.borderColor = 'transparent'
                     e.target.style.boxShadow = '0 0 0 2px var(--accent-primary)'
+                    e.target.style.backgroundColor = 'var(--surface)'
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = 'var(--neutral-300)'
@@ -298,16 +314,19 @@ export default function Feeds() {
                   value={formData.tags}
                   onChange={handleInputChange}
                   placeholder="e.g., javascript, react, remote"
-                  className="w-full px-3 py-2 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:border-transparent transition-colors touch-target"
                   style={{ 
                     borderColor: 'var(--neutral-300)',
                     borderRadius: 'var(--border-radius-lg)',
                     backgroundColor: 'var(--surface)',
-                    color: 'var(--text-primary)'
+                    color: 'var(--text-primary)',
+                    fontSize: '16px', // Prevents zoom on iOS
+                    minHeight: '48px' // Better touch target
                   }}
                   onFocus={(e) => {
                     e.target.style.borderColor = 'transparent'
                     e.target.style.boxShadow = '0 0 0 2px var(--accent-primary)'
+                    e.target.style.backgroundColor = 'var(--surface)'
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = 'var(--neutral-300)'
@@ -318,18 +337,18 @@ export default function Feeds() {
             </div>
 
             {/* Submit Button */}
-            <div className="flex justify-end space-x-3">
+            <div className="flex flex-col sm:flex-row sm:justify-end space-y-3 sm:space-y-0 sm:space-x-3 mobile-button-stack">
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
-                className="button-secondary px-4 py-2 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                className="button-secondary px-4 py-3 sm:py-2 focus:outline-none focus:ring-2 focus:ring-offset-2 touch-target"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className={`inline-flex items-center px-6 py-2 text-base font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`inline-flex items-center justify-center px-6 py-3 sm:py-2 text-sm sm:text-base font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed touch-target ${
                   saving ? 'button-processing' : 'button-success'
                 }`}
               >

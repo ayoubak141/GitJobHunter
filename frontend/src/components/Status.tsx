@@ -47,13 +47,13 @@ export default function Status() {
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'healthy':
-        return { color: 'var(--status-success)', backgroundColor: '#f0fdf4' }
+        return { color: 'var(--status-success)' }
       case 'warning':
-        return { color: 'var(--status-warning)', backgroundColor: '#fffbeb' }
+        return { color: 'var(--status-warning)' }
       case 'error':
-        return { color: 'var(--status-error)', backgroundColor: '#fef2f2' }
+        return { color: 'var(--status-error)' }
       default:
-        return { color: 'var(--text-secondary)', backgroundColor: 'var(--neutral-100)' }
+        return { color: 'var(--text-secondary)' }
     }
   }
 
@@ -83,7 +83,7 @@ export default function Status() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <div>
           <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>System Status</h2>
           <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>Monitor API health and service status</p>
@@ -91,7 +91,7 @@ export default function Status() {
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          className={`button-secondary inline-flex items-center px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 transition-colors ${
+          className={`button-secondary inline-flex items-center justify-center px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 transition-colors touch-target w-full sm:w-auto ${
             refreshing ? 'opacity-75' : ''
           }`}
         >
@@ -102,7 +102,9 @@ export default function Status() {
             </>
           ) : (
             <>
-              <ArrowPathIcon className="h-4 w-4 mr-2" /> Refresh Status
+              <ArrowPathIcon className="h-4 w-4 mr-2" /> 
+              <span className="hidden sm:inline">Refresh Status</span>
+              <span className="sm:hidden">Refresh</span>
             </>
           )}
         </button>
@@ -149,7 +151,10 @@ export default function Status() {
                 <div>{getStatusIcon(health.status)}</div>
                 <div>
                   <h4 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Overall Status</h4>
-                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full" style={getStatusColor(health.status)}>
+                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full" style={{ 
+                    ...getStatusColor(health.status),
+                    backgroundColor: 'var(--surface-variant)'
+                  }}>
                     {health.status.toUpperCase()}
                   </span>
                 </div>
@@ -172,14 +177,14 @@ export default function Status() {
                     <div className="flex items-center space-x-4 mt-1">
                       <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full" style={{
                         color: health.discord.configured ? 'var(--status-success)' : 'var(--text-secondary)',
-                        backgroundColor: health.discord.configured ? '#f0fdf4' : 'var(--neutral-100)'
+                        backgroundColor: 'var(--surface-variant)'
                       }}>
                         {health.discord.configured ? 'CONFIGURED' : 'NOT CONFIGURED'}
                       </span>
                       {health.discord.configured && (
                         <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full" style={{
                           color: health.discord.enabled ? 'var(--status-success)' : 'var(--status-warning)',
-                          backgroundColor: health.discord.enabled ? '#f0fdf4' : '#fffbeb'
+                          backgroundColor: 'var(--surface-variant)'
                         }}>
                           {health.discord.enabled ? 'ENABLED' : 'DISABLED'}
                         </span>
@@ -223,26 +228,26 @@ export default function Status() {
           </div>
           
           <div style={{ padding: 'var(--spacing-lg)' }}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 'var(--spacing-lg)' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 'var(--spacing-md)' }}>
               {/* Platform */}
-              <div className="text-center p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-variant)' }}>
-                <CloudIcon className="h-8 w-8 mx-auto mb-2" style={{ color: 'var(--accent-primary)' }} />
-                <h4 className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Platform</h4>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Cloudflare Workers</p>
+              <div className="text-center p-3 sm:p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-variant)' }}>
+                <CloudIcon className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2" style={{ color: 'var(--accent-primary)' }} />
+                <h4 className="text-xs sm:text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Platform</h4>
+                <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>Cloudflare Workers</p>
               </div>
 
               {/* Runtime */}
-              <div className="text-center p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-variant)' }}>
-                <BoltIcon className="h-8 w-8 mx-auto mb-2" style={{ color: 'var(--status-warning)' }} />
-                <h4 className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Runtime</h4>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>V8 JavaScript Engine</p>
+              <div className="text-center p-3 sm:p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-variant)' }}>
+                <BoltIcon className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2" style={{ color: 'var(--status-warning)' }} />
+                <h4 className="text-xs sm:text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Runtime</h4>
+                <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>V8 JavaScript Engine</p>
               </div>
 
               {/* Storage */}
-              <div className="text-center p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-variant)' }}>
-                <CircleStackIcon className="h-8 w-8 mx-auto mb-2" style={{ color: 'var(--text-secondary)' }} />
-                <h4 className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Storage</h4>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Cloudflare KV</p>
+              <div className="text-center p-3 sm:p-4 rounded-lg sm:col-span-2 lg:col-span-1" style={{ backgroundColor: 'var(--surface-variant)' }}>
+                <CircleStackIcon className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2" style={{ color: 'var(--text-secondary)' }} />
+                <h4 className="text-xs sm:text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Storage</h4>
+                <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>Cloudflare KV</p>
               </div>
             </div>
           </div>
@@ -263,39 +268,49 @@ export default function Status() {
           <h3 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>API Endpoints</h3>
         </div>
         
-        <div style={{ borderTop: '1px solid var(--neutral-200)' }}>
-          {[
-            { endpoint: '/health', method: 'GET', description: 'Health check endpoint' },
-            { endpoint: '/config', method: 'GET', description: 'Get Discord configuration' },
-            { endpoint: '/config', method: 'POST', description: 'Set Discord configuration' },
-            { endpoint: '/test', method: 'POST', description: 'Test Discord webhook' },
-            { endpoint: '/feeds', method: 'GET', description: 'List RSS feeds' },
-            { endpoint: '/feeds', method: 'POST', description: 'Add RSS feed' },
-            { endpoint: '/process', method: 'POST', description: 'Process job feeds' },
-            { endpoint: '/jobs', method: 'GET', description: 'Get jobs statistics' },
-          ].map((api, index) => (
-            <div key={index} style={{ 
-              padding: 'var(--spacing-lg)', 
-              borderTop: index === 0 ? 'none' : '1px solid var(--neutral-200)'
-            }}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded" style={{
-                    fontFamily: 'var(--font-family-mono)',
-                    color: api.method === 'GET' ? 'var(--accent-primary)' : 'var(--status-success)',
-                    backgroundColor: api.method === 'GET' ? '#eff6ff' : '#f0fdf4'
-                  }}>
-                    {api.method}
-                  </span>
-                  <span className="text-sm" style={{ 
-                    fontFamily: 'var(--font-family-mono)',
-                    color: 'var(--text-primary)'
-                  }}>{api.endpoint}</span>
+        <div className="mobile-table-scroll overflow-x-auto" style={{ borderTop: '1px solid var(--neutral-200)' }}>
+          <div className="min-w-full">
+            {[
+              { endpoint: '/health', method: 'GET', description: 'Health check endpoint' },
+              { endpoint: '/config', method: 'GET', description: 'Get Discord configuration' },
+              { endpoint: '/config', method: 'POST', description: 'Set Discord configuration' },
+              { endpoint: '/test', method: 'POST', description: 'Test Discord webhook' },
+              { endpoint: '/feeds', method: 'GET', description: 'List RSS feeds' },
+              { endpoint: '/feeds', method: 'POST', description: 'Add RSS feed' },
+              { endpoint: '/process', method: 'POST', description: 'Process job feeds' },
+              { endpoint: '/jobs', method: 'GET', description: 'Get jobs statistics' },
+            ].map((api, index) => (
+              <div key={index} style={{ 
+                padding: 'var(--spacing-sm) var(--spacing-md) var(--spacing-md)', 
+                borderTop: index === 0 ? 'none' : '1px solid var(--neutral-200)',
+                minWidth: '320px' // Minimum width for proper display
+              }}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                  <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+                    <span className="inline-flex px-2 py-1 text-xs font-medium rounded whitespace-nowrap" style={{
+                      fontFamily: 'var(--font-family-mono)',
+                      color: api.method === 'GET' ? 'var(--accent-primary)' : 'var(--status-success)',
+                      backgroundColor: 'var(--surface-variant)',
+                      minWidth: '48px',
+                      textAlign: 'center'
+                    }}>
+                      {api.method}
+                    </span>
+                    <span className="text-xs sm:text-sm font-mono" style={{ 
+                      fontFamily: 'var(--font-family-mono)',
+                      color: 'var(--text-primary)',
+                      wordBreak: 'break-all'
+                    }}>{api.endpoint}</span>
+                  </div>
+                  <div className="text-xs sm:text-sm pl-0 sm:pl-3" style={{ 
+                    color: 'var(--text-secondary)',
+                    flex: '1',
+                    minWidth: '0'
+                  }}>{api.description}</div>
                 </div>
-                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{api.description}</div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
@@ -308,7 +323,7 @@ export default function Status() {
             <div className="mt-2 text-sm">
               <p>• Jobs are automatically processed every 2 hours via Cloudflare cron triggers</p>
               <p>• Schedule: <code className="px-2 py-1 rounded text-xs" style={{ 
-                backgroundColor: '#eff6ff',
+                backgroundColor: 'var(--surface-variant)',
                 color: 'var(--accent-primary)',
                 fontFamily: 'var(--font-family-mono)'
               }}>0 */2 * * *</code></p>

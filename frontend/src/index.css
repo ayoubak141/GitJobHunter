@@ -108,11 +108,61 @@
   --duration-fast: 150ms;
   --duration-normal: 300ms;
   --duration-slow: 500ms;
-  
+
   --easing-linear: linear;
   --easing-ease-in: cubic-bezier(0.4, 0, 1, 1);
   --easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
   --easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Theme Variables */
+.dark {
+  /* Color Variables */
+  --primary-background: #0f172a;
+  --surface: #1e293b;
+  --surface-variant: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-inverse: #0f172a;
+  
+  /* Accent Colors remain the same but might adjust for better contrast */
+  --accent-primary: #3b82f6;
+  --accent-secondary: #2563eb;
+  --accent-success: #10b981;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+  
+  /* Job Status Colors - adjusted for dark theme */
+  --job-new: #10b981;
+  --job-viewed: #94a3b8;
+  --job-applied: #3b82f6;
+  --job-saved: #f59e0b;
+  
+  /* Feed Status Colors - adjusted for dark theme */
+  --feed-active: #10b981;
+  --feed-inactive: #94a3b8;
+  --feed-error: #ef4444;
+  --feed-processing: #8b5cf6;
+  
+  /* Status Colors - adjusted for dark theme */
+  --status-success: #10b981;
+  --status-warning: #f59e0b;
+  --status-error: #ef4444;
+  --status-info: #3b82f6;
+  --status-processing: #8b5cf6;
+  
+  /* Neutral Colors - inverted for dark theme */
+  --neutral-50: #0f172a;
+  --neutral-100: #1e293b;
+  --neutral-200: #334155;
+  --neutral-300: #475569;
+  --neutral-400: #64748b;
+  --neutral-500: #94a3b8;
+  --neutral-600: #cbd5e1;
+  --neutral-700: #e2e8f0;
+  --neutral-800: #f1f5f9;
+  --neutral-900: #f8fafc;
 }
 
 /* Base Typography */
@@ -172,6 +222,10 @@ body {
 .feed-card.error {
   border-color: var(--feed-error);
   background-color: #fef2f2;
+}
+
+.dark .feed-card.error {
+  background-color: #2d1b1b;
 }
 
 .button-primary {
@@ -263,6 +317,12 @@ body {
   border: 1px solid;
 }
 
+.dark .alert-success {
+  background-color: #0f2419;
+  border-color: #166534;
+  color: #4ade80;
+}
+
 .alert-error {
   background-color: #fef2f2;
   border-color: #fecaca;
@@ -270,6 +330,12 @@ body {
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-lg);
   border: 1px solid;
+}
+
+.dark .alert-error {
+  background-color: #2d1b1b;
+  border-color: #991b1b;
+  color: #f87171;
 }
 
 .alert-warning {
@@ -281,6 +347,12 @@ body {
   border: 1px solid;
 }
 
+.dark .alert-warning {
+  background-color: #2d2410;
+  border-color: #b45309;
+  color: #fbbf24;
+}
+
 .alert-info {
   background-color: #eff6ff;
   border-color: #bfdbfe;
@@ -290,6 +362,13 @@ body {
   border: 1px solid;
 }
 
+.dark .alert-info {
+  background-color: #1e2a4a;
+  border-color: #1e40af;
+  color: #60a5fa;
+}
+
+/* Legacy tab classes - keeping for backward compatibility if needed elsewhere */
 .tab-base {
   padding: var(--spacing-lg) var(--spacing-xs);
   border-bottom: 2px solid transparent;
@@ -309,10 +388,414 @@ body {
   border-bottom-color: var(--neutral-300);
 }
 
+/* Modern Navigation Button Styles */
+.nav-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem 1rem;
+  border-radius: var(--border-radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-normal) var(--easing-ease-in-out);
+  border: none;
+  cursor: pointer;
+  background: transparent;
+}
+
+.nav-button:hover {
+  transform: translateY(-1px);
+}
+
+.nav-button.active {
+  background-color: var(--accent-primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.nav-button:not(.active) {
+  color: var(--text-secondary);
+}
+
+.nav-button:not(.active):hover {
+  background-color: var(--surface-variant);
+  color: var(--text-primary);
+}
+
+/* Merged Header Styles */
+.merged-header-nav {
+  background-color: var(--surface-variant);
+  border-radius: var(--border-radius-xl);
+  padding: 0.25rem;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .merged-header-nav {
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.nav-pill {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-pill:hover {
+  transform: translateY(-1px);
+}
+
+.nav-pill.active {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.dark .nav-pill.active {
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced brand logo */
+.brand-logo {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brand-logo:hover {
+  transform: scale(1.05) rotate(2deg);
+}
+
+/* Touch target improvements */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  /* Better touch feedback */
+  -webkit-tap-highlight-color: rgba(37, 99, 235, 0.15);
+  tap-highlight-color: rgba(37, 99, 235, 0.15);
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+
+/* Enhanced button interactions */
+.touch-target:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease-in-out;
+}
+
+/* Better feedback for interactive elements */
+.interactive-element {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.interactive-element:hover {
+  transform: translateY(-1px);
+}
+
+.interactive-element:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .merged-header-nav {
+    padding: 0.125rem;
+    max-width: 100%;
+    border-radius: var(--border-radius-lg);
+  }
+  
+  .nav-pill {
+    padding: 0.375rem 0.25rem;
+    min-width: 2.5rem;
+    font-size: 0.75rem;
+    border-radius: var(--border-radius-md);
+  }
+  
+  /* Better mobile spacing for layout container */
+  .layout-container {
+    padding: var(--spacing-sm) var(--spacing-md);
+    max-width: 100%;
+  }
+  
+  /* Mobile-optimized stats cards */
+  .stats-card {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+  }
+  
+  /* Mobile form improvements */
+  .mobile-form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  /* Mobile button improvements */
+  .mobile-button-stack {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .mobile-button-stack button {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px; /* Better touch target */
+  }
+  
+  /* Mobile table improvements */
+  .mobile-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+    /* Show scrollbars on mobile for better UX */
+    scrollbar-color: var(--neutral-400) transparent;
+  }
+  
+  /* Better content container scrolling */
+  .content-container {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* Improved scrollbar visibility on mobile */
+  .mobile-table-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .mobile-table-scroll::-webkit-scrollbar-track {
+    background: var(--neutral-200);
+    border-radius: 3px;
+  }
+  
+  .mobile-table-scroll::-webkit-scrollbar-thumb {
+    background: var(--neutral-400);
+    border-radius: 3px;
+  }
+  
+  .mobile-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--neutral-500);
+  }
+  
+  /* Mobile text sizing */
+  .mobile-text-adjust {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+  
+  /* Mobile alert improvements */
+  .alert-success, .alert-error, .alert-warning, .alert-info {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-sm);
+  }
+  
+  /* Mobile job card improvements */
+  .job-card {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+  }
+  
+  /* Mobile feed card improvements */
+  .feed-card {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+  }
+  
+  /* Hide non-essential content on mobile */
+  .mobile-hide {
+    display: none;
+  }
+  
+  /* Improved touch targets */
+  .touch-target {
+    min-height: 48px !important;
+    min-width: 48px !important;
+    /* Better touch feedback on mobile */
+    -webkit-tap-highlight-color: rgba(37, 99, 235, 0.2);
+    tap-highlight-color: rgba(37, 99, 235, 0.2);
+  }
+  
+  /* Mobile button improvements */
+  button {
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+    font-size: var(--font-size-base);
+    border-radius: var(--border-radius-lg);
+    /* Remove default button styling on mobile */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  /* Better mobile link interactions */
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    -webkit-tap-highlight-color: rgba(37, 99, 235, 0.15);
+  }
+  
+  /* Mobile header improvements */
+  .layout-container {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+  
+  /* Enhanced mobile interactions */
+  .mobile-enhanced-touch {
+    padding: 0.875rem 1.25rem;
+    min-height: 52px;
+    border-radius: var(--border-radius-xl);
+    font-weight: var(--font-weight-medium);
+    transition: all 0.15s ease-in-out;
+  }
+  
+  .mobile-enhanced-touch:active {
+    transform: scale(0.96);
+    opacity: 0.8;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small mobile devices */
+  .layout-container {
+    padding: var(--spacing-sm);
+  }
+  
+  /* Smaller buttons on very small screens */
+  .nav-pill {
+    padding: 0.375rem 0.25rem;
+    min-width: 2.25rem;
+  }
+  
+  /* Tighter spacing */
+  .stats-card, .job-card, .feed-card {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  /* Smaller text on very small screens */
+  .mobile-xs-text {
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Extra small mobile form improvements */
+  input, textarea, select {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 0.75rem !important;
+    min-height: 48px !important;
+  }
+  
+  /* Compact grid on very small screens */
+  .mobile-form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  /* Extra small mobile typography */
+  h1 { 
+    font-size: var(--font-size-lg) !important;
+    line-height: 1.3;
+  }
+  h2 { 
+    font-size: var(--font-size-base) !important;
+    line-height: 1.4;
+  }
+  h3 { 
+    font-size: var(--font-size-sm) !important;
+    line-height: 1.4;
+  }
+  
+  /* Compact text for very small screens */
+  .text-2xl {
+    font-size: var(--font-size-lg) !important;
+  }
+  .text-xl {
+    font-size: var(--font-size-base) !important;
+  }
+  .text-lg {
+    font-size: var(--font-size-sm) !important;
+  }
+  
+  /* Better line height for readability */
+  body {
+    line-height: 1.6 !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  /* Tablet-specific improvements */
+  .merged-header-nav {
+    padding: 0.25rem;
+  }
+  
+  .nav-pill {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
 .layout-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--spacing-lg);
+}
+
+/* Mobile-first responsive typography */
+@media (max-width: 640px) {
+  h1 { 
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-tight);
+    margin-bottom: var(--spacing-sm);
+  }
+  h2 { 
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-tight);
+    margin-bottom: var(--spacing-sm);
+  }
+  h3 { 
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    margin-bottom: var(--spacing-xs);
+  }
+  h4 {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  /* Better mobile paragraph and text spacing */
+  p {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  /* Improved mobile text readability */
+  .text-sm {
+    font-size: var(--font-size-xs) !important;
+    line-height: 1.6;
+  }
+  
+  .text-xs {
+    font-size: 0.7rem !important;
+    line-height: 1.5;
+  }
+  
+  /* Better mobile spacing */
+  .space-y-6 > * + * {
+    margin-top: var(--spacing-lg);
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: var(--spacing-md);
+  }
+  
+  .space-y-3 > * + * {
+    margin-top: var(--spacing-sm);
+  }
+  
+  .space-y-2 > * + * {
+    margin-top: var(--spacing-xs);
+  }
 }
 
 /* Utility Classes for Design System Integration */
@@ -324,3 +807,67 @@ body {
 .bg-surface { background-color: var(--surface); }
 .bg-surface-variant { background-color: var(--surface-variant); }
 .bg-primary { background-color: var(--primary-background); }
+
+/* Modern Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Enhanced Header Shadow for Dark Mode */
+.dark header {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Smooth transitions for interactive elements */
+button {
+  transition: all var(--duration-normal) var(--easing-ease-in-out);
+}
+
+/* Enhanced focus states */
+button:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Improved scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neutral-400);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-500);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--neutral-700);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--neutral-500);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
+}
