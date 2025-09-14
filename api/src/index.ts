@@ -18,6 +18,29 @@ interface ExecutionContext {
 
 const app = new Hono<{ Bindings: Env }>()
 
+// CORS middleware to handle cross-origin requests from frontend
+app.use('*', async (c, next) => {
+  // Handle preflight OPTIONS requests
+  if (c.req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Max-Age': '86400', // Cache preflight for 24 hours
+      },
+    })
+  }
+  
+  // Add CORS headers to all responses
+  await next()
+  
+  c.header('Access-Control-Allow-Origin', '*')
+  c.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  c.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+})
+
 // Helper functions for Discord config
 function isValidDiscordWebhook(url: string): boolean {
   try {
