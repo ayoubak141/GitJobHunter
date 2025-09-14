@@ -1,14 +1,39 @@
 // API configuration
 const API_BASE_URL = 'http://localhost:8787' // Your Hono API running locally
 
-// Types from OpenAPI specification
+// Types from your API
 export interface Job {
-  id: string
   title: string
   link: string
-  description: string
-  publishedAt: string
+  description?: string
+  pubDate?: string
+  company?: string
+  location?: string
+  source?: string
+}
+
+export interface Feed {
+  name: string
+  url: string
   source: string
+  category?: string
+  params?: Record<string, string | number>
+}
+
+export interface DiscordConfig {
+  webhookUrl?: string
+  enabled: boolean
+  maxJobsPerMessage: number
+  configured: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface TestResponse {
+  success: boolean
+  message: string
+  webhookUrl: string
+  timestamp: string
 }
 
 export interface FeedConfig {
@@ -17,16 +42,26 @@ export interface FeedConfig {
   url: string
   source: string
   category: string
-  params?: Record<string, string> | null
   enabled?: boolean
+  params?: Record<string, string | number>
 }
 
-export interface DiscordConfig {
-  configured: boolean
-  enabled?: boolean
-  maxJobsPerMessage?: number
-  createdAt?: string
-  updatedAt?: string
+export interface ProcessResponse {
+  success: boolean
+  message: string
+  totalJobs: number
+  newJobsFound: number
+  notificationSent?: boolean
+  notificationError?: string
+  failedFeeds?: string[]
+  jobs?: Array<{
+    id: string
+    title: string
+    link: string
+    description: string
+    publishedAt: string
+    source: string
+  }>
 }
 
 export interface HealthStatus {
@@ -41,29 +76,9 @@ export interface HealthStatus {
 
 export interface JobsStats {
   totalJobs: number
+  newJobs: number
   lastProcessed?: string
-}
-
-export interface ProcessResponse {
-  success: boolean
-  message: string
-  newJobsFound: number
-  notificationSent: boolean
-  notificationError?: string
-  failedFeeds?: string[]
-  jobs: Job[]
-  totalJobs: number
-}
-
-export interface FeedsResponse {
-  feeds: FeedConfig[]
-}
-
-export interface TestResponse {
-  success: boolean
-  message: string
-  webhookUrl: string
-  timestamp: string
+  feeds: Feed[]
 }
 
 // API utility functions
@@ -106,7 +121,7 @@ class ApiClient {
     return this.request<DiscordConfig>('/config')
   }
 
-  async setConfig(config: { webhookUrl?: string; enabled?: boolean; maxJobsPerMessage?: number }): Promise<{ message: string; config: Omit<DiscordConfig, 'configured'> }> {
+  async setConfig(config: { webhookUrl?: string; enabled?: boolean; maxJobsPerMessage?: number }): Promise<{ message: string }> {
     return this.request('/config', {
       method: 'POST',
       body: JSON.stringify(config),
@@ -120,11 +135,11 @@ class ApiClient {
   }
 
   // Feed management
-  async getFeeds(): Promise<FeedsResponse> {
-    return this.request<FeedsResponse>('/feeds')
+  async getFeeds(): Promise<{ feeds: FeedConfig[] }> {
+    return this.request<{ feeds: FeedConfig[] }>('/feeds')
   }
 
-  async addFeed(feed: Omit<FeedConfig, 'id' | 'enabled'>): Promise<{ message: string; feed: FeedConfig }> {
+  async addFeed(feed: Omit<FeedConfig, 'id'>): Promise<{ message: string; feed: FeedConfig }> {
     return this.request('/feeds', {
       method: 'POST',
       body: JSON.stringify(feed),

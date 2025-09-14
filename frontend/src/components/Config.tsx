@@ -50,7 +50,7 @@ export default function Config() {
       setError(null)
       setSuccess(null)
 
-      const configData: any = {
+      const configData: { webhookUrl?: string; enabled: boolean; maxJobsPerMessage: number } = {
         enabled,
         maxJobsPerMessage
       }

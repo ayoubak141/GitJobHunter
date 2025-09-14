@@ -209,7 +209,11 @@ export default function Dashboard() {
                         {job.title}
                       </a>
                     </h4>
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{job.description}</p>
+                    <p className="text-sm text-gray-500 mt-1 overflow-hidden line-clamp-2" style={{
+                      display: '-webkit-box',
+                      WebkitBoxOrient: 'vertical',
+                      WebkitLineClamp: 2
+                    }}>{job.description}</p>
                     <div className="flex items-center space-x-4 mt-2 text-xs text-gray-400">
                       <span>Source: {job.source}</span>
                       <span>Published: {new Date(job.publishedAt).toLocaleDateString()}</span>
