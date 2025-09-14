@@ -23,16 +23,20 @@ function App() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--primary-background)' }}>
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+      <header style={{ 
+        backgroundColor: 'var(--surface)', 
+        borderBottom: '1px solid var(--neutral-200)',
+        padding: 'var(--spacing-lg)'
+      }}>
+        <div className="layout-container">
+          <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <MagnifyingGlassIcon className="h-8 w-8 text-blue-600" />
+              <MagnifyingGlassIcon className="h-8 w-8" style={{ color: 'var(--accent-primary)' }} />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">GitJobHunter</h1>
-                <p className="text-sm text-gray-500">Automated Job Aggregation Dashboard</p>
+                <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>GitJobHunter</h1>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Automated Job Aggregation Dashboard</p>
               </div>
             </div>
           </div>
@@ -40,18 +44,19 @@ function App() {
       </header>
 
       {/* Navigation */}
-      <nav className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav style={{ 
+        backgroundColor: 'var(--surface)', 
+        borderBottom: '1px solid var(--neutral-200)' 
+      }}>
+        <div className="layout-container">
           <div className="flex space-x-8">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`tab-base ${
+                  activeTab === tab.id ? 'tab-active' : 'tab-hover'
+                } inline-flex items-center`}
               >
                 <tab.icon className="h-5 w-5 mr-2" />
                 {tab.name}
@@ -62,7 +67,7 @@ function App() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="layout-container" style={{ paddingTop: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)' }}>
         {activeTab === 'dashboard' && <Dashboard />}
         {activeTab === 'feeds' && <Feeds />}
         {activeTab === 'config' && <Config />}
