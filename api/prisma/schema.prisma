@@ -36,6 +36,10 @@ model Feed {
   
   jobs      Job[]
 
+  @@index([source])
+  @@index([category])
+  @@index([enabled])
+  @@index([source, category])
   @@map("feeds")
 }
 
@@ -53,8 +57,23 @@ model Job {
   
   feed        Feed     @relation(fields: [feedId], references: [id], onDelete: Cascade)
   
+  // Existing indexes
   @@index([hash])
   @@index([publishedAt])
   @@index([processedAt])
+  
+  // New optimized indexes for filtering and searching
+  @@index([source])
+  @@index([feedId])
+  @@index([publishedAt, source])
+  @@index([publishedAt, feedId])
+  @@index([processedAt, source])
+  @@index([title]) // For title-based sorting and filtering
+  
+  // Composite indexes for common query patterns
+  @@index([feedId, publishedAt])
+  @@index([source, publishedAt])
+  @@index([feedId, source, publishedAt])
+  
   @@map("jobs")
 }

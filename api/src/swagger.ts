@@ -304,6 +304,167 @@ export const openAPISpec = {
         }
       }
     },
+    '/jobs': {
+      get: {
+        summary: 'Get All Jobs',
+        description: 'Retrieve all jobs with pagination, filtering, and sorting capabilities',
+        tags: ['Jobs'],
+        parameters: [
+          {
+            name: 'page',
+            in: 'query',
+            description: 'Page number (starts from 1)',
+            schema: {
+              type: 'integer',
+              minimum: 1,
+              default: 1
+            }
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            description: 'Number of items per page (max 100)',
+            schema: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 10
+            }
+          },
+          {
+            name: 'search',
+            in: 'query',
+            description: 'Search in job title and description',
+            schema: {
+              type: 'string'
+            }
+          },
+          {
+            name: 'source',
+            in: 'query',
+            description: 'Filter by job source',
+            schema: {
+              type: 'string'
+            }
+          },
+          {
+            name: 'category',
+            in: 'query',
+            description: 'Filter by feed category',
+            schema: {
+              type: 'string'
+            }
+          },
+          {
+            name: 'dateFrom',
+            in: 'query',
+            description: 'Filter jobs published from this date',
+            schema: {
+              type: 'string',
+              format: 'date-time'
+            }
+          },
+          {
+            name: 'dateTo',
+            in: 'query',
+            description: 'Filter jobs published until this date',
+            schema: {
+              type: 'string',
+              format: 'date-time'
+            }
+          },
+          {
+            name: 'sortBy',
+            in: 'query',
+            description: 'Sort by field',
+            schema: {
+              type: 'string',
+              enum: ['publishedAt', 'processedAt', 'title'],
+              default: 'publishedAt'
+            }
+          },
+          {
+            name: 'sortOrder',
+            in: 'query',
+            description: 'Sort order',
+            schema: {
+              type: 'string',
+              enum: ['asc', 'desc'],
+              default: 'desc'
+            }
+          },
+          {
+            name: 'fields',
+            in: 'query',
+            description: 'Comma-separated list of fields to include in response',
+            schema: {
+              type: 'string',
+              example: 'id,title,link,publishedAt'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Paginated list of jobs',
+            content: {
+              'application/json': {
+                schema: {
+                  '$ref': '#/components/schemas/PaginatedJobsResponse'
+                }
+              }
+            }
+          },
+          '500': {
+            description: 'Server error',
+            content: {
+              'application/json': {
+                schema: {
+                  '$ref': '#/components/schemas/Error'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    '/jobs/sources': {
+      get: {
+        summary: 'Get Job Sources',
+        description: 'Get all available job sources with job counts',
+        tags: ['Jobs'],
+        responses: {
+          '200': {
+            description: 'List of job sources',
+            content: {
+              'application/json': {
+                schema: {
+                  '$ref': '#/components/schemas/JobSourcesResponse'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    '/jobs/categories': {
+      get: {
+        summary: 'Get Job Categories',
+        description: 'Get all available job categories with job counts',
+        tags: ['Jobs'],
+        responses: {
+          '200': {
+            description: 'List of job categories',
+            content: {
+              'application/json': {
+                schema: {
+                  '$ref': '#/components/schemas/JobCategoriesResponse'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     '/jobs/status': {
       get: {
         summary: 'Job Statistics',
@@ -428,6 +589,168 @@ export const openAPISpec = {
             type: 'boolean',
             description: 'Whether this feed is enabled for processing',
             default: true
+          }
+        }
+      },
+      JobEntry: {
+        type: 'object',
+        properties: {
+          id: { 
+            type: 'string',
+            description: 'Unique identifier for the job'
+          },
+          title: { 
+            type: 'string',
+            description: 'Job title'
+          },
+          link: { 
+            type: 'string', 
+            format: 'uri',
+            description: 'Link to the job posting'
+          },
+          description: { 
+            type: 'string',
+            nullable: true,
+            description: 'Job description'
+          },
+          publishedAt: { 
+            type: 'string', 
+            format: 'date-time',
+            description: 'When the job was originally published'
+          },
+          processedAt: { 
+            type: 'string', 
+            format: 'date-time',
+            description: 'When the job was processed by our system'
+          },
+          source: { 
+            type: 'string',
+            description: 'Source platform of the job'
+          },
+          hash: { 
+            type: 'string',
+            description: 'Unique hash for deduplication'
+          }
+        }
+      },
+      PaginationInfo: {
+        type: 'object',
+        properties: {
+          page: { 
+            type: 'integer',
+            description: 'Current page number'
+          },
+          limit: { 
+            type: 'integer',
+            description: 'Items per page'
+          },
+          total: { 
+            type: 'integer',
+            description: 'Total number of items'
+          },
+          totalPages: { 
+            type: 'integer',
+            description: 'Total number of pages'
+          },
+          hasNext: { 
+            type: 'boolean',
+            description: 'Whether there is a next page'
+          },
+          hasPrev: { 
+            type: 'boolean',
+            description: 'Whether there is a previous page'
+          }
+        }
+      },
+      JobFilters: {
+        type: 'object',
+        properties: {
+          search: { 
+            type: 'string',
+            nullable: true,
+            description: 'Search term used'
+          },
+          source: { 
+            type: 'string',
+            nullable: true,
+            description: 'Source filter applied'
+          },
+          category: { 
+            type: 'string',
+            nullable: true,
+            description: 'Category filter applied'
+          },
+          dateFrom: { 
+            type: 'string',
+            format: 'date-time',
+            nullable: true,
+            description: 'Date from filter applied'
+          },
+          dateTo: { 
+            type: 'string',
+            format: 'date-time',
+            nullable: true,
+            description: 'Date to filter applied'
+          }
+        }
+      },
+      PaginatedJobsResponse: {
+        type: 'object',
+        properties: {
+          jobs: {
+            type: 'array',
+            items: {
+              '$ref': '#/components/schemas/JobEntry'
+            },
+            description: 'Array of job entries'
+          },
+          pagination: {
+            '$ref': '#/components/schemas/PaginationInfo'
+          },
+          filters: {
+            '$ref': '#/components/schemas/JobFilters'
+          }
+        }
+      },
+      JobSourcesResponse: {
+        type: 'object',
+        properties: {
+          sources: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                  description: 'Source name'
+                },
+                count: {
+                  type: 'integer',
+                  description: 'Number of jobs from this source'
+                }
+              }
+            }
+          }
+        }
+      },
+      JobCategoriesResponse: {
+        type: 'object',
+        properties: {
+          categories: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                  description: 'Category name'
+                },
+                count: {
+                  type: 'integer',
+                  description: 'Number of jobs in this category'
+                }
+              }
+            }
           }
         }
       },
