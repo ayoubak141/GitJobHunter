@@ -7,8 +7,6 @@ import {
   ArrowPathIcon,
   ChatBubbleLeftRightIcon,
   BoltIcon,
-  CloudIcon,
-  CircleStackIcon,
   ClockIcon
 } from '@heroicons/react/24/outline'
 import { api, type HealthStatus } from '../utils/api'
@@ -212,107 +210,6 @@ export default function Status() {
         </div>
       )}
 
-      {/* System Information */}
-      {health && (
-        <div style={{ 
-          backgroundColor: 'var(--surface)', 
-          borderRadius: 'var(--border-radius-lg)', 
-          border: '1px solid var(--neutral-200)',
-          boxShadow: 'var(--shadow-sm)'
-        }}>
-          <div style={{ 
-            padding: 'var(--spacing-lg)', 
-            borderBottom: '1px solid var(--neutral-200)' 
-          }}>
-            <h3 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>System Information</h3>
-          </div>
-          
-          <div style={{ padding: 'var(--spacing-lg)' }}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ gap: 'var(--spacing-md)' }}>
-              {/* Platform */}
-              <div className="text-center p-3 sm:p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-variant)' }}>
-                <CloudIcon className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2" style={{ color: 'var(--accent-primary)' }} />
-                <h4 className="text-xs sm:text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Platform</h4>
-                <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>Cloudflare Workers</p>
-              </div>
-
-              {/* Runtime */}
-              <div className="text-center p-3 sm:p-4 rounded-lg" style={{ backgroundColor: 'var(--surface-variant)' }}>
-                <BoltIcon className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2" style={{ color: 'var(--status-warning)' }} />
-                <h4 className="text-xs sm:text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Runtime</h4>
-                <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>V8 JavaScript Engine</p>
-              </div>
-
-              {/* Storage */}
-              <div className="text-center p-3 sm:p-4 rounded-lg sm:col-span-2 lg:col-span-1" style={{ backgroundColor: 'var(--surface-variant)' }}>
-                <CircleStackIcon className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2" style={{ color: 'var(--text-secondary)' }} />
-                <h4 className="text-xs sm:text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Storage</h4>
-                <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>Cloudflare KV</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* API Endpoints Status */}
-      <div style={{ 
-        backgroundColor: 'var(--surface)', 
-        borderRadius: 'var(--border-radius-lg)', 
-        border: '1px solid var(--neutral-200)',
-        boxShadow: 'var(--shadow-sm)'
-      }}>
-        <div style={{ 
-          padding: 'var(--spacing-lg)', 
-          borderBottom: '1px solid var(--neutral-200)' 
-        }}>
-          <h3 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>API Endpoints</h3>
-        </div>
-        
-        <div className="mobile-table-scroll overflow-x-auto" style={{ borderTop: '1px solid var(--neutral-200)' }}>
-          <div className="min-w-full">
-            {[
-              { endpoint: '/health', method: 'GET', description: 'Health check endpoint' },
-              { endpoint: '/config', method: 'GET', description: 'Get Discord configuration' },
-              { endpoint: '/config', method: 'POST', description: 'Set Discord configuration' },
-              { endpoint: '/test', method: 'POST', description: 'Test Discord webhook' },
-              { endpoint: '/feeds', method: 'GET', description: 'List RSS feeds' },
-              { endpoint: '/feeds', method: 'POST', description: 'Add RSS feed' },
-              { endpoint: '/process', method: 'POST', description: 'Process job feeds' },
-              { endpoint: '/jobs', method: 'GET', description: 'Get jobs statistics' },
-            ].map((api, index) => (
-              <div key={index} style={{ 
-                padding: 'var(--spacing-sm) var(--spacing-md) var(--spacing-md)', 
-                borderTop: index === 0 ? 'none' : '1px solid var(--neutral-200)',
-                minWidth: '320px' // Minimum width for proper display
-              }}>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                  <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
-                    <span className="inline-flex px-2 py-1 text-xs font-medium rounded whitespace-nowrap" style={{
-                      fontFamily: 'var(--font-family-mono)',
-                      color: api.method === 'GET' ? 'var(--accent-primary)' : 'var(--status-success)',
-                      backgroundColor: 'var(--surface-variant)',
-                      minWidth: '48px',
-                      textAlign: 'center'
-                    }}>
-                      {api.method}
-                    </span>
-                    <span className="text-xs sm:text-sm font-mono" style={{ 
-                      fontFamily: 'var(--font-family-mono)',
-                      color: 'var(--text-primary)',
-                      wordBreak: 'break-all'
-                    }}>{api.endpoint}</span>
-                  </div>
-                  <div className="text-xs sm:text-sm pl-0 sm:pl-3" style={{ 
-                    color: 'var(--text-secondary)',
-                    flex: '1',
-                    minWidth: '0'
-                  }}>{api.description}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Cron Schedule Info */}
       <div className="alert-info">

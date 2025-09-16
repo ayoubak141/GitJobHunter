@@ -1,30 +1,30 @@
 // API configuration
 const API_BASE_URL = 'http://localhost:8787' // Your Hono API running locally
 
-// Types from your API
+// Types matching OpenAPI specification
 export interface Job {
+  id: string
   title: string
   link: string
-  description?: string
-  pubDate?: string
-  company?: string
-  location?: string
-  source?: string
+  description: string
+  publishedAt: string
+  source: string
 }
 
-export interface Feed {
+export interface FeedConfig {
+  id?: string
   name: string
   url: string
   source: string
-  category?: string
-  params?: Record<string, string | number>
+  category: string
+  params?: Record<string, string> | null
+  enabled?: boolean
 }
 
 export interface DiscordConfig {
-  webhookUrl?: string
+  configured: boolean
   enabled: boolean
   maxJobsPerMessage: number
-  configured: boolean
   createdAt?: string
   updatedAt?: string
 }
@@ -36,32 +36,15 @@ export interface TestResponse {
   timestamp: string
 }
 
-export interface FeedConfig {
-  id?: string
-  name: string
-  url: string
-  source: string
-  category: string
-  enabled?: boolean
-  params?: Record<string, string | number>
-}
-
 export interface ProcessResponse {
   success: boolean
   message: string
-  totalJobs: number
   newJobsFound: number
-  notificationSent?: boolean
-  notificationError?: string
-  failedFeeds?: string[]
-  jobs?: Array<{
-    id: string
-    title: string
-    link: string
-    description: string
-    publishedAt: string
-    source: string
-  }>
+  notificationSent: boolean
+  notificationError?: string | null
+  failedFeeds?: string[] | null
+  jobs: Job[]
+  totalJobs: number
 }
 
 export interface HealthStatus {
@@ -76,9 +59,13 @@ export interface HealthStatus {
 
 export interface JobsStats {
   totalJobs: number
-  newJobs: number
-  lastProcessed?: string
-  feeds: Feed[]
+  lastProcessed?: string | null
+}
+
+export interface ApiError {
+  error: string
+  message?: string
+  timestamp?: string
 }
 
 // API utility functions
@@ -121,7 +108,7 @@ class ApiClient {
     return this.request<DiscordConfig>('/config')
   }
 
-  async setConfig(config: { webhookUrl?: string; enabled?: boolean; maxJobsPerMessage?: number }): Promise<{ message: string }> {
+  async setConfig(config: { webhookUrl?: string; enabled?: boolean; maxJobsPerMessage?: number }): Promise<{ message: string; config: DiscordConfig }> {
     return this.request('/config', {
       method: 'POST',
       body: JSON.stringify(config),
@@ -129,7 +116,7 @@ class ApiClient {
   }
 
   async testDiscord(): Promise<TestResponse> {
-    return this.request<TestResponse>('/test', {
+    return this.request<TestResponse>('/config/test', {
       method: 'POST',
     })
   }
@@ -146,15 +133,15 @@ class ApiClient {
     })
   }
 
-  // Job processing
+  // Job processing and statistics
   async processJobs(): Promise<ProcessResponse> {
-    return this.request<ProcessResponse>('/process', {
+    return this.request<ProcessResponse>('/jobs/process', {
       method: 'POST',
     })
   }
 
-  async getJobs(): Promise<JobsStats> {
-    return this.request<JobsStats>('/jobs')
+  async getJobsStats(): Promise<JobsStats> {
+    return this.request<JobsStats>('/jobs/status')
   }
 }
 

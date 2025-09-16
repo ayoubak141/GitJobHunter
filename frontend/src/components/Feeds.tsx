@@ -64,7 +64,7 @@ export default function Feeds() {
         url: formData.url.trim(),
         source: formData.source.trim(),
         category: formData.category.trim(),
-        params: formData.tags.trim() ? { tags: formData.tags.trim() } : undefined
+        params: formData.tags.trim() ? { tags: formData.tags.trim() } : null
       }
 
       const result = await api.addFeed(feedData)

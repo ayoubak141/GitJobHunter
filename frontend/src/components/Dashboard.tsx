@@ -28,7 +28,7 @@ export default function Dashboard() {
       setLoading(true)
       setError(null)
       const [jobsData, feedsData] = await Promise.all([
-        api.getJobs(),
+        api.getJobsStats(),
         api.getFeeds()
       ])
       setJobsData(jobsData)
