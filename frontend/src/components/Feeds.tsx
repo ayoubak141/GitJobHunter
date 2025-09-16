@@ -432,8 +432,8 @@ export default function Feeds() {
                         rel="noopener noreferrer"
                         className="break-all transition-colors"
                         style={{ color: 'var(--accent-primary)' }}
-                        onMouseEnter={(e) => e.target.style.color = 'var(--accent-secondary)'}
-                        onMouseLeave={(e) => e.target.style.color = 'var(--accent-primary)'}
+                        onMouseEnter={(e) => (e.target as HTMLAnchorElement).style.color = 'var(--accent-secondary)'}
+                        onMouseLeave={(e) => (e.target as HTMLAnchorElement).style.color = 'var(--accent-primary)'}
                       >
                         {feed.url}
                       </a>
@@ -457,8 +457,8 @@ export default function Feeds() {
             onClick={() => setShowAddForm(true)}
             className="font-medium transition-colors inline-flex items-center"
             style={{ color: 'var(--accent-primary)' }}
-            onMouseEnter={(e) => e.target.style.color = 'var(--accent-secondary)'}
-            onMouseLeave={(e) => e.target.style.color = 'var(--accent-primary)'}
+            onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = 'var(--accent-secondary)'}
+            onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = 'var(--accent-primary)'}
           >
             <PlusIcon className="h-4 w-4 inline mr-1" /> Add RSS Feed
           </button>

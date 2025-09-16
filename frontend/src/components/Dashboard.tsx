@@ -4,14 +4,18 @@ import {
   ArrowPathIcon, 
   CheckIcon, 
   XMarkIcon,
-  ChartBarIcon,
   SparklesIcon,
   RssIcon,
-  ClockIcon 
+  ClockIcon,
+  BriefcaseIcon 
 } from '@heroicons/react/24/outline'
 import { api, type JobsStats, type FeedConfig, type ProcessResponse } from '../utils/api'
 
-export default function Dashboard() {
+interface DashboardProps {
+  onTabChange?: (tab: 'dashboard' | 'jobs' | 'feeds' | 'config' | 'status') => void
+}
+
+export default function Dashboard({ onTabChange }: DashboardProps = {}) {
   const [jobsData, setJobsData] = useState<JobsStats | null>(null)
   const [feeds, setFeeds] = useState<FeedConfig[]>([])
   const [loading, setLoading] = useState(true)
@@ -153,16 +157,19 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: 'var(--spacing-lg)' }}>
-        <div className="stats-card overflow-hidden">
+        <div className="stats-card overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onTabChange?.('jobs')}>
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <ChartBarIcon className="h-8 w-8" style={{ color: 'var(--accent-primary)' }} />
+              <BriefcaseIcon className="h-8 w-8" style={{ color: 'var(--accent-primary)' }} />
             </div>
             <div style={{ marginLeft: 'var(--spacing-lg)' }} className="w-0 flex-1">
               <dl>
                 <dt className="text-sm font-medium truncate" style={{ color: 'var(--text-secondary)' }}>Total Jobs</dt>
                 <dd className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>{jobsData?.totalJobs || 0}</dd>
               </dl>
+            </div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
+              View All →
             </div>
           </div>
         </div>

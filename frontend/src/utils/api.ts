@@ -6,9 +6,11 @@ export interface Job {
   id: string
   title: string
   link: string
-  description: string
+  description: string | null
   publishedAt: string
+  processedAt: string
   source: string
+  hash: string
 }
 
 export interface FeedConfig {
@@ -66,6 +68,60 @@ export interface ApiError {
   error: string
   message?: string
   timestamp?: string
+}
+
+export interface PaginationInfo {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
+}
+
+export interface JobFilters {
+  search?: string | null
+  source?: string | null
+  category?: string | null
+  dateFrom?: string | null
+  dateTo?: string | null
+}
+
+export interface PaginatedJobsResponse {
+  jobs: Job[]
+  pagination: PaginationInfo
+  filters: JobFilters
+}
+
+export interface JobSource {
+  name: string
+  count: number
+}
+
+export interface JobCategory {
+  name: string
+  count: number
+}
+
+export interface JobSourcesResponse {
+  sources: JobSource[]
+}
+
+export interface JobCategoriesResponse {
+  categories: JobCategory[]
+}
+
+export interface JobsQueryParams {
+  page?: number
+  limit?: number
+  search?: string
+  source?: string
+  category?: string
+  dateFrom?: string
+  dateTo?: string
+  sortBy?: 'publishedAt' | 'processedAt' | 'title'
+  sortOrder?: 'asc' | 'desc'
+  fields?: string
 }
 
 // API utility functions
@@ -142,6 +198,32 @@ class ApiClient {
 
   async getJobsStats(): Promise<JobsStats> {
     return this.request<JobsStats>('/jobs/status')
+  }
+  
+  // Job listing and filtering
+  async getJobs(params?: JobsQueryParams): Promise<PaginatedJobsResponse> {
+    const searchParams = new URLSearchParams()
+    
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(key, value.toString())
+        }
+      })
+    }
+    
+    const queryString = searchParams.toString()
+    const endpoint = queryString ? `/jobs?${queryString}` : '/jobs'
+    
+    return this.request<PaginatedJobsResponse>(endpoint)
+  }
+
+  async getJobSources(): Promise<JobSourcesResponse> {
+    return this.request<JobSourcesResponse>('/jobs/sources')
+  }
+
+  async getJobCategories(): Promise<JobCategoriesResponse> {
+    return this.request<JobCategoriesResponse>('/jobs/categories')
   }
 }
 

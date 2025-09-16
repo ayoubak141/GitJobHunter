@@ -4,17 +4,19 @@ import {
   RssIcon, 
   CogIcon, 
   MagnifyingGlassIcon,
+  BriefcaseIcon,
   SunIcon,
   MoonIcon 
 } from '@heroicons/react/24/outline'
 import Dashboard from './components/Dashboard'
 import Config from './components/Config'
 import Feeds from './components/Feeds'
+import Jobs from './components/Jobs'
 import Status from './components/Status'
 import ThemeToggle from './components/ThemeToggle'
 import { useTheme } from './contexts/ThemeContext'
 
-type Tab = 'dashboard' | 'feeds' | 'config' | 'status'
+type Tab = 'dashboard' | 'jobs' | 'feeds' | 'config' | 'status'
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard')
@@ -22,6 +24,7 @@ function App() {
 
   const tabs = [
     { id: 'dashboard' as const, name: 'Dashboard', icon: ChartBarIcon },
+    { id: 'jobs' as const, name: 'Jobs', icon: BriefcaseIcon },
     { id: 'feeds' as const, name: 'RSS Feeds', icon: RssIcon },
     { id: 'config' as const, name: 'Configuration', icon: CogIcon },
     { id: 'status' as const, name: 'Status', icon: MagnifyingGlassIcon },
@@ -151,7 +154,8 @@ function App() {
         minHeight: 'calc(100vh - 80px)'
       }}>
         <div className="animate-fadeIn">
-          {activeTab === 'dashboard' && <Dashboard />}
+          {activeTab === 'dashboard' && <Dashboard onTabChange={setActiveTab} />}
+          {activeTab === 'jobs' && <Jobs />}
           {activeTab === 'feeds' && <Feeds />}
           {activeTab === 'config' && <Config />}
           {activeTab === 'status' && <Status />}
