@@ -1,8 +1,9 @@
 // Shared types for GitJobHunter API
+import { PrismaClient } from '@prisma/client'
 
 export interface Env {
-  KV: KVNamespace
-  DISCORD_WEBHOOK_URL?: string
+  DATABASE_URL: string
+  db?: PrismaClient // Prisma client instance
 }
 
 export interface JobEntry {

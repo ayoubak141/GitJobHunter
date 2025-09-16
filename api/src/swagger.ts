@@ -146,7 +146,7 @@ export const openAPISpec = {
         }
       }
     },
-    '/test': {
+    '/config/test': {
       post: {
         summary: 'Test Discord Webhook',
         description: 'Send a test notification to verify Discord webhook is working correctly',
@@ -304,11 +304,42 @@ export const openAPISpec = {
         }
       }
     },
-    '/process': {
+    '/jobs/status': {
+      get: {
+        summary: 'Job Statistics',
+        description: 'Get statistics about processed jobs',
+        tags: ['Jobs'],
+        responses: {
+          '200': {
+            description: 'Job statistics',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    totalJobs: {
+                      type: 'integer',
+                      description: 'Total number of unique jobs processed'
+                    },
+                    lastProcessed: {
+                      type: 'string',
+                      format: 'date-time',
+                      nullable: true,
+                      description: 'Timestamp of last job processed'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    '/jobs/process': {
       post: {
-        summary: 'Process All Feeds (Manual)',
-        description: 'Manually trigger job processing from all enabled RSS feeds and send Discord notifications. Note: Jobs are automatically processed every 2 hours via Cloudflare cron triggers, so manual processing is optional.',
-        tags: ['Processing'],
+        summary: 'Process Jobs',
+        description: 'Process all feeds and find new jobs (same as /process endpoint)',
+        tags: ['Jobs'],
         responses: {
           '200': {
             description: 'Feeds processed successfully',
@@ -350,37 +381,6 @@ export const openAPISpec = {
           },
           '400': {
             description: 'Processing failed - check Discord configuration and feeds'
-          }
-        }
-      }
-    },
-    '/jobs': {
-      get: {
-        summary: 'Job Statistics',
-        description: 'Get statistics about processed jobs',
-        tags: ['Jobs'],
-        responses: {
-          '200': {
-            description: 'Job statistics',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    totalJobs: {
-                      type: 'integer',
-                      description: 'Total number of unique jobs processed'
-                    },
-                    lastProcessed: {
-                      type: 'string',
-                      format: 'date-time',
-                      nullable: true,
-                      description: 'Timestamp of last job processed'
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       }

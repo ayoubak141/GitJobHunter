@@ -11,7 +11,7 @@ A zero-maintenance job aggregation system that monitors RSS feeds, deduplicates 
 - 🔄 **Smart Deduplication**: Hash-based job tracking prevents duplicate notifications
 - 📊 **RSS Aggregation**: Support for multiple RSS feeds with custom parameters
 - 📖 **Interactive Docs**: Built-in Swagger UI documentation
-- ⚡ **Serverless**: Runs on Cloudflare Workers with KV storage
+- ⚡ **Serverless**: Runs on Cloudflare Workers with PostgreSQL database
 - 🛠 **Zero Maintenance**: No servers to manage, automatic scaling
 
 ## ⚡ Quick Start
@@ -33,7 +33,7 @@ yarn deploy
 GitJobHunter API (Cloudflare Worker)
 ├── 🕐 Cron Triggers (Every 2 hours)
 ├── 📊 RSS Feed Processing
-├── 🔍 Job Deduplication (KV Store)
+├── 🔍 Job Deduplication (PostgreSQL)
 ├── 📢 Discord Notifications
 └── 🌐 REST API Endpoints
 ```
@@ -69,7 +69,7 @@ api/
 - **Batch processing** with error resilience per feed
 
 #### `types.ts` - Type Definitions
-- **Environment interfaces** for Cloudflare KV bindings
+- **Environment interfaces** for PostgreSQL database connections
 - **Data structures** for jobs, feeds, and Discord configuration
 - **Type safety** throughout the application
 
@@ -179,7 +179,7 @@ Once deployed, jobs are automatically processed every 2 hours with zero maintena
 ## 🔍 How Job Deduplication Works
 
 1. **Hash Generation**: Each job gets a unique hash from `link + title`
-2. **KV Storage**: Seen job hashes stored in Cloudflare KV
+2. **Database Storage**: Job data and configurations stored in PostgreSQL
 3. **Smart Filtering**: Only new jobs trigger Discord notifications
 4. **Persistent Memory**: Job history persists across deployments
 
@@ -191,10 +191,10 @@ graph LR
     B --> C[Fetch RSS]
     C --> D[Parse XML]
     D --> E[Generate Hashes]
-    E --> F[Check KV Store]
+    E --> F[Check Database]
     F --> G[Filter New Jobs]
     G --> H[Send Discord]
-    H --> I[Update KV Store]
+    H --> I[Update Database]
 ```
 
 ## 🛠 Development

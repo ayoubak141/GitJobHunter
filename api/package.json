@@ -3,13 +3,23 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "dev:prod": "wrangler dev --config wrangler.prod.jsonc",
+    "deploy": "wrangler deploy --minify --config wrangler.prod.jsonc",
+    "deploy:dev": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.5.2",
+    "@prisma/adapter-pg-worker": "^6.9.0",
+    "@prisma/client": "^6.9.0",
+    "@prisma/pg-worker": "^6.9.0",
     "fast-xml-parser": "^4.3.2",
-    "hono": "^4.9.7"
+    "hono": "^4.9.7",
+    "prisma": "^6.9.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250913.0",

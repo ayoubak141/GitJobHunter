@@ -1,11 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "git-job-hunter-api",
+  "name": "git-job-hunter-api-prod",
   "main": "src/index.ts",
   "compatibility_date": "2025-09-06",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
-    "ENV": "development"
+    "ENV": "production"
   },
   "triggers": {
     "crons": ["0 */2 * * *"]

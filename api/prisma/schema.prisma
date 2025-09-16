@@ -1,0 +1,60 @@
+// GitJobHunter Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Discord webhook configuration
+model DiscordConfig {
+  id                Int      @id @default(autoincrement())
+  webhookUrl        String
+  enabled           Boolean  @default(true)
+  maxJobsPerMessage Int      @default(10)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("discord_configs")
+}
+
+// RSS Feed configurations
+model Feed {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  source    String
+  category  String
+  params    Json?    // Store RSS parameters as JSON
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  jobs      Job[]
+
+  @@map("feeds")
+}
+
+// Job entries from RSS feeds
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  link        String   @unique
+  description String?
+  publishedAt DateTime
+  processedAt DateTime @default(now())
+  source      String
+  hash        String   @unique // For deduplication
+  feedId      String
+  
+  feed        Feed     @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  
+  @@index([hash])
+  @@index([publishedAt])
+  @@index([processedAt])
+  @@map("jobs")
+}
